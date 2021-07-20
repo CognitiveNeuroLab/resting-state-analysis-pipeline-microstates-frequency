@@ -11,11 +11,11 @@
 
 <br />
 <p align="center">
-  <a href="https://github.com/DouweHorsthuis/N-back-task-experiment/">
+  <a href="https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/">
     <img src="images/logo.jpeg" alt="Logo" width="160" height="160">
   </a> 
 
-<h3 align="center">N-Back Task</h3>
+<h3 align="center">Resting state - Pre-process/Microstates/PowerFrequency</h3>
 
 <h4 align="center">This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This is work from Ana Francisco Douwe Horsthuis and Filip de Sanctis 
 </h4>
@@ -67,9 +67,9 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-1. Clone the N-back-task-experiment
+1. Clone the resting-state-analysis-pipeline-microstates-frequency
    ```sh
-   git clone https://github.com/DouweHorsthuis/N-back-task-experiment/.git
+   git clone https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/.git
    ```
 2. Install NPM packages
    ```sh
@@ -88,7 +88,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 ## Roadmap
 
-See the [open issues](https://github.com/DouweHorsthuis/N-back-task-experiment/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/issues) for a list of proposed features (and known issues).
 
 
 ## Contributing
@@ -113,7 +113,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Your Name - [@douwejhorsthuis](https://twitter.com/douwejhorsthuis) - douwehorsthuis@gmail.com
 
-Project Link: [https://github.com/DouweHorsthuis/N-back-task-experiment/](https://github.com/DouweHorsthuis/N-back-task-experiment/)
+Project Link: [https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/](https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/)
 
 
 
@@ -128,13 +128,13 @@ Project Link: [https://github.com/DouweHorsthuis/N-back-task-experiment/](https:
 
 -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/DouweHorsthuis/N-back-task-experiment.svg?style=for-the-badge
-[contributors-url]: https://github.com/DouweHorsthuis/N-back-task-experiment/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/DouweHorsthuis/N-back-task-experiment.svg?style=for-the-badge
-[forks-url]: https://github.com/DouweHorsthuis/N-back-task-experiment/network/members
-[stars-shield]: https://img.shields.io/github/stars/DouweHorsthuis/N-back-task-experiment.svg?style=for-the-badge
-[stars-url]: https://github.com/DouweHorsthuis/N-back-task-experiment/stargazers
-[issues-shield]: https://img.shields.io/github/issues/DouweHorsthuis/N-back-task-experiment.svg?style=for-the-badge
-[issues-url]: https://github.com/DouweHorsthuis/N-back-task-experiment/issues
-[license-shield]: https://img.shields.io/github/license/DouweHorsthuis/N-back-task-experiment.svg?style=for-the-badge
-[license-url]: https://github.com/DouweHorsthuis/N-back-task-experiment/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[contributors-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[forks-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/network/members
+[stars-shield]: https://img.shields.io/github/stars/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[stars-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/stargazers
+[issues-shield]: https://img.shields.io/github/issues/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[issues-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/issues
+[license-shield]: https://img.shields.io/github/license/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[license-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/blob/master/LICENSE.txt
