@@ -1,5 +1,3 @@
-# resting-state-analysis-pipeline-microstates-frequency
-
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -15,10 +13,10 @@
     <img src="images/logo.jpeg" alt="Logo" width="160" height="160">
   </a> 
 
-<h3 align="center">Resting state - Pre-process/Microstates/PowerFrequency</h3>
+<h3 align="center">Resting state - Pre-process/Microstates/PowerFrequency</h1>
 
-<h4 align="center">This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This is work from Ana Francisco Douwe Horsthuis and Filip de Sanctis 
-</h4>
+This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This is work from [Ana Francisco](https://github.com/anafrancisco) [Douwe Horsthuis](https://github.com/DouweHorsthuis) and [Filip de Sanctis](https://github.com/pdesanctis) 
+
 
 <!--
 **Table of Contents**
