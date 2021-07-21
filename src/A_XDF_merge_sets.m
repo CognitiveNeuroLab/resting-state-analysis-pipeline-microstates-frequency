@@ -14,7 +14,7 @@ for s = 1:length(subject_list) %12376 might be 13
     
     EEG  = pop_loadxdf([data_path filename  '.xdf'] , 'streamtype', 'EEG', 'exclude_markerstreams', {});
     temp      = EEG.data;
-    EEG.data  = temp([2:161],:);   % This should work for a 64 cap
+    EEG.data  = temp([2:65],:);   % This should work for a 64 cap
     triggers  = temp(1,:);                % triggers
     triggers  = double(triggers - temp(1,1)); % take first sample and substract from time series to create zero-baseline
     ind     = find(triggers > 40); % this should work to ID triggers send for starting presentation and for starting eyes closed block

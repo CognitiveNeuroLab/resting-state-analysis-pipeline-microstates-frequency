@@ -7,14 +7,10 @@
 % exclude channels
 % ------------------------------------------------
 clear variables
-% This defines the set of subjects
-%eeglab_location = 'C:\Users\dohorsth\Documents\Matlab\eeglab2019_1\'; %douwe pc
-%eeglab_location = 'C:\Users\dohorsth\Documents\eeglab2019_1\'; %mobi office pc
-%scripts_location = '\\data.einsteinmed.org\users\Filip Ana Douwe\Scripts\'; %needed if using 160channel data
-% Path to the parent folder, which contains the data folders for all subjects
+
 group = {'ASD' 'Control' 'Aging'};% 'Aging' 'Control'};
 
-for g=2:length(group) 
+for g=1:length(group) 
     if strcmp(group{g},'ASD')
         %subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1108' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11369' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
         %redo 160chan people
