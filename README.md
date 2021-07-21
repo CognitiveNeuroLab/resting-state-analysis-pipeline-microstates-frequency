@@ -37,7 +37,7 @@ This is still a work in progress. This Repo will contain the full pipeline to an
 
 * [Matlab](https://www.mathworks.com/)
 * [EEGlab](https://sccn.ucsd.edu/eeglab/index.php)
-* [ERPlab](https://erpinfo.org/erplab)
+
 
 
 
@@ -52,7 +52,7 @@ All of these scripts are created to run in matlab. They use EEGlab
 * [EEGlab](https://sccn.ucsd.edu/eeglab/index.php)
 * [ERPlab](https://erpinfo.org/erplab) (eeglab plugin)
 * [XDFimport](http://sccn.ucsd.edu/eeglab/plugins/xdfimport1.14.zip) (eeglab plugin)
-* [IClabel](https://github.com/sccn/ICLabel)(eeglab plugin)
+* [IClabel](https://github.com/sccn/ICLabel) (eeglab plugin)
 
 ## Resting state project
 ### Paradigm
