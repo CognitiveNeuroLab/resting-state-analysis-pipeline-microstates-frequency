@@ -16,7 +16,9 @@
 <h3 align="center">Resting state - Pre-process/Microstates/PowerFrequency</h1>
 
 ## About The Project
+
 This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This  is work from [Ana Francisco](https://github.com/anafrancisco) [Douwe Horsthuis](https://github.com/DouweHorsthuis) and [Filip de Sanctis](https://github.com/pdesanctis) 
+
 
 
 
