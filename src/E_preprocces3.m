@@ -53,7 +53,8 @@ for s=1:length(subject_list)
     EEG = pop_loadset('filename', [subject_list{s} '_ica.set'], 'filepath', data_path);
     %organizing components
     clear bad_components brain_ic muscle_ic eye_ic hearth_ic line_noise_ic channel_ic other_ic
-    EEG = iclabel(EEG); %does ICLable function
+    pca = EEG.nbchan-1; %the PCA part of the ICA needs stops the rank-deficiency 
+    EEG = pop_runica(EEG, 'extended',1,'interupt','on','pca',pca); %using runica function, with the PCA part
     ICA_components = EEG.etc.ic_classification.ICLabel.classifications ; %creates a new matrix with ICA components
     %Only the eyecomponent will be deleted, thus only components 3 will be put into the 8 component
     ICA_components(:,8) = ICA_components(:,3); %row 1 = Brain row 2 = muscle row 3= eye row 4 = Heart Row 5 = Line Noise row 6 = channel noise row 7 = other, combining this makes sure that the component also gets deleted if its a combination of all.

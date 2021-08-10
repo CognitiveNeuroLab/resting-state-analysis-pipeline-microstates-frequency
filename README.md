@@ -27,8 +27,9 @@ This is still a work in progress. This Repo will contain the full pipeline to an
 2. [Getting started](#getting-started)
     - [Prerequisites](#prerequisites)  
 3. [Resting state project](#resting-state-project)
-3. [Pipeline](#roadmap)  
+3. [Pipeline](#pipeline)  
     - [Raw data to .set and merge](#raw-data-to-.set-and-merge)
+    - [Pre processing](#pre-processing)  
 3. [License](#license)
 3. [Contact](#contact)
 3. [Acknowledgement](#acknowledgement)
@@ -39,10 +40,6 @@ This is still a work in progress. This Repo will contain the full pipeline to an
 
 * [Matlab](https://www.mathworks.com/)
 * [EEGlab](https://sccn.ucsd.edu/eeglab/index.php)
-
-
-
-
 
 
 ## Getting Started
@@ -72,7 +69,7 @@ This is normally pretty straight forward in EEGlab. But in this case we have 3 d
 The mostly used script is the A_bdf_merge_sets. This simply takes the Raw data (.bdf) and turns it into a .set file  
 
 #### A_bdf_non_paradigm_merge_sets
-Then there is the A_bdf_non_paradigm_merge_sets. Since some of the data is collected without a paradigm but is saved into 2 separate files without triggers, this script solves that. It loads the .bdf file that ends in _open.bdf and adds a eyes open trigger to the start. It does the same for the .bdf file eding in _closed with the exception that here it adds and eyes closed trigger. 
+Then there is the A_bdf_non_paradigm_merge_sets. Since some of the data is collected without a paradigm but is saved into 2 separate files without triggers, this script solves that. It loads the .bdf file that ends in _open.bdf and adds a eyes open trigger to the start. It does the same for the .bdf file ending in _closed with the exception that here it adds and eyes closed trigger. 
 Lastly it merges the two files into one.  
 
 #### A_XDF_merge_sets
@@ -83,26 +80,32 @@ The first channel has all the trigger info. The script uses this channel to add 
 ### Pre processing
 #### B_preprocess1
 This script is the first of the pre-processing scripts. It runs all the people in order of their group.  
-One of the issues we encounterd was that some participants had their data collected using the wrong configuration file. This is taken care of.  
-The data is downsampled from 512Hz to 256 Hz.  
+One of the issues we encountered was that some participants had their data collected using the wrong configuration file. This is taken care of.  
+The data is down-sampled from 512Hz to 256 Hz.  
 Externals are all deleted since not everyone has externals. So we cannot use them as a reference.  
 We apply a 1Hz (filter order 1690) and 50Hz (filter order 136) filter.
 We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, Cap160_fromBESAWebpage, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data.  
-Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 4 seconds and the function checks if channels are overly correlated with eachother. **double check this last statement**
+Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 4 seconds and the function checks if channels are overly correlated with each other. **double check this last statement**
 
 #### C_manual_check
-This script plots all the data in EEGlab as continues data and allowes you to delete channels manually. 
+This script plots all the data in EEGlab as continues data and allows you to delete channels manually. 
 
 #### D_preprocces2
-This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each indiviual participant. 
+This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each individual participant. 
 
 #### E_preprocces3
 This script will do an average reference.  
-This is followed by an [Independent Component Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html) 
-After his we delete only eyecompenents by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 5% brain data. 
+This is followed by an [Independent Component Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html). We use the pca option to prevent rank-deficiencies.
+After his we delete only eye components by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 5% brain data. 
 
-#### F_epoching
-Continue here
+#### F_epoching_cleaning  
+Here we look for the 50 and 51 trigger. We add a 40 trigger every 2sec after the 50 trigger and we add a 41 trigger every 2 seconds after the 51 trigger. After that we use the ERP plugin's functions to delete every epoch that has too much noise. We keep a variable that will contain how much % of the data was deleted for each participant and how many epochs are left. 
+
+# to be continued
+<!--see if we want to have this script reduce every persons data to 64 channels. 
+#### G_interpolate
+This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data. 
+<!--see if we want to have this script reduce every persons data to 64 channels. 
 
 <!--
 ## Contributing
