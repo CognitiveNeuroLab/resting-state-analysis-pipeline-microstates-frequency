@@ -26,7 +26,12 @@ for s=1:length(subject_list)
     EEG = pop_loadset('filename', [subject_list{s} '_cleanepochs.set'], 'filepath', data_path); %loads latest pre-proc file
     labels_good = {EEG.chanlocs.labels}.'; %saves all the channels that are in the excom file
     disp(EEG.nbchan); %writes down how many channels are there
+    if EEG.nbchan>64 %this should interpolate whatever is left of the 160 channels into 64 channel data
+    EEG_new = pop_loadset('filename', '64.set', 'filepath', home_path);%loading participant file with 64 channels
+    EEG = transform_channels(EEG,EEG_new,64);    
+    else %this will be most people that will just have 64 channel data and get their bad channels interpolated here
     EEG = pop_interp(EEG, EEGinter.chanlocs, 'spherical');%interpolates the data
+    end
     EEG = eeg_checkset( EEG );
     EEG = pop_saveset( EEG, 'filename', [subject_list{s} '_inter.set'], 'filepath', data_path); %saves data
     disp(EEG.nbchan) %should print 64

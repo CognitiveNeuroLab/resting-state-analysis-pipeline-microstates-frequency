@@ -97,9 +97,12 @@ This script will double check and fix any potential trigger issue we encountered
 This script will do an average reference.  
 This is followed by an [Independent Component Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html). We use the pca option to prevent rank-deficiencies.
 After his we delete only eye components by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 5% brain data. 
+After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m). This function epochs the data temporatly and deletes the epochs that are noisy. We set this to a threshold of 8, because this would delete between 0-20% of the data. We save a matlab structure with how much data of each participant get's deleted. 
+
+**note** for the Aging group, we use the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) function also right before the ICA. This is because the data was too noisy for more than 50% of the participants to find eye components. 
 
 #### F_epoching_cleaning  
-Here we look for the 50 and 51 trigger. We add a 40 trigger every 2sec after the 50 trigger and we add a 41 trigger every 2 seconds after the 51 trigger. After that we use the ERP plugin's functions to delete every epoch that has too much noise. We keep a variable that will contain how much % of the data was deleted for each participant and how many epochs are left. 
+WE ARE SKIPPING THIS, NO NEED TO EPOCH ANYMORE
 
 # to be continued
 <!--see if we want to have this script reduce every persons data to 64 channels. 
