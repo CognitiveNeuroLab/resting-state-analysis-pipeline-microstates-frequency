@@ -64,16 +64,15 @@ for g=1:length(group)
         end
         %adding channel location
         if EEG.nbchan >63 && EEG.nbchan < 95 %64chan cap (can be a lot of externals, this makes sure that it includes a everything that is under 96 channels, which could be an extra ribbon)
-            EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
-            EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
+            EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer  
         elseif EEG.nbchan >159 && EEG.nbchan < 191 %160chan cap
             if isempty(EEG.chanlocs) && EEG.nbchan==160
                 EEG = pop_editset(EEG, 'chanlocs', [home_path 'Cap160_fromBESAWebpage.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
             else
-                EEG=pop_chanedit(EEG, 'lookup',[home_path 'Cap160_fromBESAWebpage.sfp']); %make sure you put here the location of this file for your computer
-                EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
+                EEG=pop_chanedit(EEG, 'lookup',[home_path 'Cap160_fromBESAWebpage.sfp']); %make sure you put here the location of this file for your computer  
             end
         end
+        EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
         old_n_chan = EEG.nbchan;
         EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','on','Distance','Euclidian');
         new_n_chan = EEG.nbchan;

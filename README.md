@@ -101,7 +101,7 @@ After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob
 
 **note** for the Aging group, we use the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) function also right before the ICA. This is because the data was too noisy for more than 50% of the participants to find eye components. 
 
-#### F_interpolate
+#### F_preprocces4
 This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data.  
 In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
 

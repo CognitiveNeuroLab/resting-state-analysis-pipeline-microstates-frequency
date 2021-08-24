@@ -5,7 +5,7 @@
 clear variables
 eeglab
 close all
-Group = {'Aging' 'ASD' };%'Control'
+Group = {'Aging' 'ASD'};%'Control'
 name_paradigm = 'restingstate'; % this is needed for saving the table at the end
 for g=1:length(Group)
     switch Group{g}
@@ -20,7 +20,7 @@ for g=1:length(Group)
             subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
     end
     
-    participant_badchan = string(zeros(length(subject_list), 2)); %prealocationg space for speed
+    participant_badchan = string(zeros(length(subject_list), 5)); %prealocationg space for speed
     for s=1:length(subject_list)
         fprintf('\n******\nProcessing subject %s\n******\n\n', subject_list{s});
         clear labels_all labels_good lables_del data_subj
@@ -28,12 +28,6 @@ for g=1:length(Group)
         % Load original dataset
         fprintf('\n\n\n**** %s: Loading dataset ****\n\n\n', subject_list{s});
         EEGinter = pop_loadset('filename', [subject_list{s} '_info.set'], 'filepath', data_path);%loading participant file with 64 channels
-        %For the aging 
-        if strcmp(Group{g},'Aging') && EEGinter.nbchan==160 && isempty(EEGinter.chanlocs)
-            EEGinter = pop_editset(EEGinter, 'chanlocs', [home_path 'Cap160_fromBESAWebpage.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
-        elseif strcmp(Group{g},'Aging') && EEGinter.nbchan==64 && isempty(EEGinter.chanlocs)
-             EEGinter = pop_editset(EEGinter, 'chanlocs', [home_path 'BioSemi64.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
-        end
         %saving the original amount of total channels
         labels_all = {EEGinter.chanlocs.labels}.'; %stores all the labels in a new matrix
         %interpolating the 160channels to 64 channels
@@ -57,7 +51,6 @@ for g=1:length(Group)
             disp(EEG.nbchan); %writes down how many channels are there
             EEG = pop_interp(EEG, EEGinter.chanlocs, 'spherical');%interpolates the data
         end
-        clear EEG_temp EEGinter
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename', [subject_list{s} '_inter.set'], 'filepath', data_path); %saves data
         disp(EEG.nbchan)
@@ -65,8 +58,9 @@ for g=1:length(Group)
         lables_del                 = setdiff(labels_all,labels_good); %only stores the deleted channels
         All_bad_chan               = strjoin(lables_del); %puts them in one string rather than individual strings
         ID                         = string(subject_list{s});%keeps all the IDs
-        data_subj                  = [ID, All_bad_chan]; %combines IDs and Bad channels
+        data_subj                  = [ID, length(lables_del),EEGinter.nbchan, All_bad_chan, EEG.nbchan]; %combines IDs and Bad channels, total channels at the end
         participant_badchan(s,:)   = data_subj;%combine new data with old data
+        clear EEG_temp EEGinter
     end
     save([home_path name_paradigm '_participant_interpolation_info'], 'participant_badchan');
 end
