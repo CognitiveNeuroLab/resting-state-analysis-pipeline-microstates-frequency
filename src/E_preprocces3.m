@@ -1,12 +1,12 @@
-clear variables
-eeglab
-Group = {'Aging' 'ASD' 'Control'}; %
+%clear variables
+%eeglab
+Group = {'Aging'}; %'Control'
 
 for g=1:length(Group)
     switch Group{g}
         case 'Control'
             home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
-            subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
+            subject_list = {'12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899' '10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' };% ------------------------------------------------
         case 'ASD'
             home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
             subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants;
@@ -54,7 +54,7 @@ for g=1:length(Group)
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ref.set'],'filepath', data_path);
         
         %because the ICA data + overall data is short seem noisy we clean extra for this group
-        if strcmp(Group, 'Aging')
+        if strcmp(Group{g}, 'Aging')
             orig_length=EEG.xmax;
             EEG = pop_rejcont(EEG, 'elecrange',[1:EEG.nbchan] ,'freqlimit',[20 40] ,'threshold',8 ,'epochlength',0.5,'contiguous',4,'addlength',0.25,'taper','hamming');
             clean_length=EEG.xmax;
@@ -111,7 +111,7 @@ for g=1:length(Group)
     end
     save([home_path 'components'], 'components');
     if strcmp(Group, 'Aging')
-        save([home_path 'deleted_data_before_ica'], 'deleted_data_before');
+        save([home_path 'deleted_data_before_ica_160ch'], 'deleted_data_before');
     end
-    save([home_path 'deleted_data'], 'deleted_data');
+    save([home_path 'deleted_data_160ch'], 'deleted_data');
 end

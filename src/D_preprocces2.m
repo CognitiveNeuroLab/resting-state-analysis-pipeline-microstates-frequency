@@ -2,13 +2,13 @@
 % there are 2 people with the wrong triggers (63539 & 63538 (wrong?) & 63488)
 % there are 2 people without a trigger but we have the logfile with the time
 % there are several people with 255 as an extra trigger
-clear variables
-eeglab
+%clear variables
+%eeglab
 Group = 'Aging'; % 'Control'  'ASD' 'Aging'
 
 switch Group
     case 'Control'
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Control\';
+        home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
         subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
         participant_info = num2cell(zeros(length(subject_list),9));
     case 'ASD'
@@ -81,11 +81,11 @@ for s=1:length(subject_list)
             EEG.etc.clean_channel_mask = [1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1];
             disp('used it 64')
         elseif EEG.nbchan< 161
-            EEG.etc.clean_channel_mask = [1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1];   
+            EEG.etc.clean_channel_mask = [1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1];
             disp('used it 160')
         end
     end
-    %    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_triggerfix.set'],'filepath', data_path);%save
+    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_triggerfix.set'],'filepath', data_path);%save
     %doing the final test to make sure everyone has trigger 50 and 51 (ignoring boundary)
     final_triggers={EEG.event.type};
     ii=[];
@@ -102,4 +102,4 @@ for s=1:length(subject_list)
     end
     participant_info(s,:)= [subject_list(s), trigger_info, trigger_225, length(EEG.etc.clean_channel_mask), EEG.nbchan, 100-(EEG.nbchan/length(EEG.etc.clean_channel_mask)*100), EEG.xmax,final_triggers];
 end
-%save([home_path 'participant_info'], 'participant_info');
+save([home_path 'participant_info_160chn'], 'participant_info');
