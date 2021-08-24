@@ -1,0 +1,4 @@
+Latency	Type	Position
+20	50	1
+320	51	2
+

@@ -9,7 +9,7 @@
 
 <br />
 <p align="center">
-  <a href="https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/">
+  <a href="https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/">
     <img src="images/logo.jpeg" alt="Logo" width="160" height="160">
   </a> 
 
@@ -84,7 +84,7 @@ One of the issues we encountered was that some participants had their data colle
 The data is down-sampled from 512Hz to 256 Hz.  
 Externals are all deleted since not everyone has externals. So we cannot use them as a reference.  
 We apply a 1Hz (filter order 1690) and 50Hz (filter order 136) filter.
-We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, Cap160_fromBESAWebpage, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data.  
+We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, Cap160_fromBESAWebpage, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data. You can find these in the Functions and files folder (inside the src folder).  
 Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 4 seconds and the function checks if channels are overly correlated with each other. **double check this last statement**
 
 #### C_manual_check
@@ -101,25 +101,10 @@ After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob
 
 **note** for the Aging group, we use the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) function also right before the ICA. This is because the data was too noisy for more than 50% of the participants to find eye components. 
 
-#### F_epoching_cleaning  
-WE ARE SKIPPING THIS, NO NEED TO EPOCH ANYMORE
+#### F_interpolate
+This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data.  
+In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
 
-# to be continued
-<!--see if we want to have this script reduce every persons data to 64 channels. 
-#### G_interpolate
-This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data. 
-<!--see if we want to have this script reduce every persons data to 64 channels. 
-
-<!--
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 
 
@@ -130,31 +115,22 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 ## Contact
-
-Your Name - [@douwejhorsthuis](https://twitter.com/douwejhorsthuis) - douwehorsthuis@gmail.com
-
-Project Link: [https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/](https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/)
-
+Ana Francisco    - ana.alvesfrancisco@einsteinmed.org
+Douwe Horsthuis  - douwehorsthuis@gmail.com
+Filip De Sanctis - pierfilippo.sanctis@einsteinmed.org
 
 
-
-## Acknowledgements
-
-* []()
-* []()
-* []()
+Project Link: [resting-state-analysis-pipeline-microstates-frequency](https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency)
 
 
 
--->
-
-[contributors-shield]: https://img.shields.io/github/contributors/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
-[contributors-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
-[forks-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/network/members
-[stars-shield]: https://img.shields.io/github/stars/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
-[stars-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/stargazers
-[issues-shield]: https://img.shields.io/github/issues/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
-[issues-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/issues
-[license-shield]: https://img.shields.io/github/license/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
-[license-url]: https://github.com/DouweHorsthuis/resting-state-analysis-pipeline-microstates-frequency/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[contributors-url]: https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[forks-url]: https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/network/members
+[stars-shield]: https://img.shields.io/github/stars/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[stars-url]: https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/stargazers
+[issues-shield]: https://img.shields.io/github/issues/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[issues-url]: https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/issues
+[license-shield]: https://img.shields.io/github/license/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge
+[license-url]: https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/blob/master/LICENSE.txt
