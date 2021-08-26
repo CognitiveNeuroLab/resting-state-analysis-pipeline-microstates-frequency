@@ -105,7 +105,12 @@ After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob
 This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data.  
 In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
 
+### Power Frequency Analysis
+In the G_PSD_pwelsh script, we first make sure that the triggers are still in the right place. Due to the extra cleaning we did with the pop_rejcont function in [E_preprocces3](#e_preprocces3) it is possible that the triggers got deleted if the corresponding continues data were too noisy. If they got deleted, the scripts calculates what the time of the onset of that deleted part of data was and uses that instead as the latency of the trigger. 
 
+After that we use the the [pwelch function of Matlab](https://www.mathworks.com/help/signal/ref/pwelch.html) and a log tranformation of the results to get the power frequency results.  
+
+#add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
 
 
 ## License
