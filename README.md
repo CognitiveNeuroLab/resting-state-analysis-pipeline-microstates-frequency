@@ -110,7 +110,7 @@ In the G_PSD_pwelsh script, we first make sure that the triggers are still in th
 
 After that we use the the [pwelch function of Matlab](https://www.mathworks.com/help/signal/ref/pwelch.html) and a log tranformation of the results to get the power frequency results.  
 
-#add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
+# add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
 
 
 ## License

@@ -27,6 +27,7 @@ for group_count = 1:length(group)
         people_no50_trigger = [];
         people_no51_trigger = [];
         trigger50_51_same = [];
+        trigger_times=num2cell(zeros(length(subject_list),5));        
     end
     path_1 = ['C:\Users\dohorsth\Desktop\Testing restingstate\' group{group_count} '\'];
     
@@ -100,7 +101,8 @@ for group_count = 1:length(group)
             data_EC = EEG.data(:,info(4):info(4)+(info(4)-info(3))); %this makes sure they are both equally long
         end
         data_EC(:,1:2560)=[];%added to delete first 10 sec
-        % end
+        %
+        trigger_times(subject_list_count,:)=[subject_list(subject_list_count), info(1),info(2),info(3),info(4)];
         %% Compute Power
         CPz = 32;
         Pz  = 31;
@@ -127,9 +129,10 @@ for group_count = 1:length(group)
     %         save([path_1 'PSD_EC_CPzlog_' group{group_count}], 'PSD_EC_CPzlog')
     %         save([path_1 'PSD_EC_Pzlog_' group{group_count}], 'PSD_EC_Pzlog')
     %         save([path_1 'PSD_EC_Czlog_' group{group_count}], 'PSD_EC_Czlog')
-    save([path_1 'trigger50_51_same_' group{group_count}], 'trigger50_51_same')
-    save([path_1 'people_no_trigger_' group{group_count}], 'people_no_trigger')
-    save([path_1 'people_1_trigger_' group{group_count}], 'people_1_trigger')
+    save([path_1 'trigger50_51_same_' group{group_count}], 'trigger50_51_same');
+    save([path_1 'people_no_trigger_' group{group_count}], 'people_no_trigger');
+    save([path_1 'people_1_trigger_' group{group_count}], 'people_1_trigger');
+    save([path_1 'trigger_times_' group{group_count}], 'trigger_times');
     
 end
 
