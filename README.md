@@ -112,6 +112,10 @@ After that we use the the [pwelch function of Matlab](https://www.mathworks.com/
 
 # add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
 
+### Microstates
+this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide.
+
+
 
 ## License
 
