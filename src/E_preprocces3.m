@@ -1,6 +1,6 @@
-%clear variables
-%eeglab
-Group = {'Aging'}; %'Control'
+clear variables
+eeglab
+Group = {'Aging' 'Control' 'ASD'}; %'Control'
 
 for g=1:length(Group)
     switch Group{g}
@@ -15,8 +15,6 @@ for g=1:length(Group)
             subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
             deleted_data_before = num2cell(zeros(length(subject_list), 2)); %only this group wil have their data cleaned extra
     end
-    
-    
     figure_path = [home_path 'figures\'];
     participant_info = num2cell(zeros(length(subject_list),9));
     deleted_data = num2cell(zeros(length(subject_list), 2));
@@ -73,7 +71,7 @@ for g=1:length(Group)
         ICA_components = EEG.etc.ic_classification.ICLabel.classifications ; %creates a new matrix with ICA components
         %Only the eyecomponent will be deleted, thus only components 3 will be put into the 8 component
         ICA_components(:,8) = ICA_components(:,3); %row 1 = Brain row 2 = muscle row 3= eye row 4 = Heart Row 5 = Line Noise row 6 = channel noise row 7 = other, combining this makes sure that the component also gets deleted if its a combination of all.
-        bad_components = find(ICA_components(:,8)>0.80 & ICA_components(:,1)<0.05); %if the new row is over 80% of the component and the component has less the 5% brain
+        bad_components = find(ICA_components(:,8)>0.80 & ICA_components(:,1)<0.10); %if the new row is over 80% of the component and the component has less the 5% brain
         %Still labeling all the other components so they get saved in the end
         brain_ic = length(find(ICA_components(:,1)>0.80));
         muscle_ic = length(find(ICA_components(:,2)>0.80 & ICA_components(:,1)<0.05));
@@ -82,7 +80,7 @@ for g=1:length(Group)
         line_noise_ic = length(find(ICA_components(:,5)>0.80 & ICA_components(:,1)<0.05));
         channel_ic = length(find(ICA_components(:,6)>0.80 & ICA_components(:,1)<0.05));
         other_ic = length(find(ICA_components(:,7)>0.80 & ICA_components(:,1)<0.05));
-        %will plot all the IC components that get deleted
+        %Plotting all eye componentes and all remaining components
         if isempty(bad_components)~= 1 %script would stop if people lack bad components
             if ceil(sqrt(length(bad_components))) == 1
                 pop_topoplot(EEG, 0, [bad_components bad_components] ,subject_list{s} ,0,'electrodes','on');
@@ -90,13 +88,39 @@ for g=1:length(Group)
                 pop_topoplot(EEG, 0, [bad_components] ,subject_list{s},[ceil(sqrt(length(bad_components))) ceil(sqrt(length(bad_components)))] ,0,'electrodes','on');
             end
             title(subject_list{s});
-            print([figure_path subject_list{s} '_Bad_ICs_topos'], '-dpng');
+            print([figure_path subject_list{s} '_Bad_ICs_topos'], '-dpng' ,'-r300');
             EEG = pop_subcomp( EEG, [bad_components], 0); %excluding the bad components
+            close all
         else %instead of only plotting bad components it will plot all components
+            title(subject_list{s}); text( 0.2,0.5, 'there are no eye-components found')
             pop_topoplot(EEG, 0, 1:length(ICA_components) ,subject_list{s},[ceil(sqrt(length(ICA_components))) ceil(sqrt(length(ICA_components)))] ,0,'electrodes','on');
             title(subject_list{s});
-            print([figure_path subject_list{s} '_no_bad_ICs_topos'], '-dpng');
+            print([figure_path subject_list{s} '_Bad_ICs_topos'], '-dpng' ,'-r300');
         end
+        title(subject_list{s});
+        pop_topoplot(EEG, 0, 1:size(EEG.icaweights,1) ,subject_list{s},[ceil(sqrt(size(EEG.icaweights,1))) ceil(sqrt(size(EEG.icaweights,1)))] ,0,'electrodes','on');
+        print([figure_path subject_list{s} '_remaining_ICs_topos'], '-dpng' ,'-r300');
+        close all
+        %putting both figures in 1 plot saving it, deleting the other 2.
+        figure('units','normalized','outerposition',[0 0 1 1])
+        if EEG.nbchan<65
+            subplot(1,5,1);
+        else
+            subplot(1,10,1);
+        end
+        imshow([figure_path subject_list{s} '_Bad_ICs_topos.png']);
+        title('Deleted components')
+        if EEG.nbchan<65
+            subplot(1,5,2:5);
+        else
+            subplot(1,10,2:10);
+        end
+        imshow([figure_path subject_list{s} '_remaining_ICs_topos.png']);
+        title('Remaining components')
+        print([figure_path subject_list{s} '_ICs_topos'], '-dpng' ,'-r300');
+        %deleting two original files
+        delete([figure_path subject_list{s} '_Bad_ICs_topos.png'])
+        delete([figure_path subject_list{s} '_remaining_ICs_topos.png'])
         close all
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_excom.set'],'filepath', data_path);%save
         %% extra cleaning
@@ -110,8 +134,5 @@ for g=1:length(Group)
         components(s,:)=[subj_comps];
     end
     save([home_path 'components'], 'components');
-    if strcmp(Group, 'Aging')
-        save([home_path 'deleted_data_before_ica_160ch'], 'deleted_data_before');
-    end
-    save([home_path 'deleted_data_160ch'], 'deleted_data');
+    save([home_path 'deleted_data'], 'deleted_data');
 end
