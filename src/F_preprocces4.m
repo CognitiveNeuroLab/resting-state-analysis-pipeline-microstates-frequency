@@ -5,12 +5,12 @@
 clear variables
 eeglab
 close all
-Group = {'Aging' 'ASD'};%'Control'
+Group = {'ASD'};%'Control'
 name_paradigm = 'restingstate'; % this is needed for saving the table at the end
 for g=1:length(Group)
     switch Group{g}
         case 'Control'
-            home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
+            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Control\';
             subject_list = {'12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899' '10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' };% ------------------------------------------------
         case 'ASD'
             home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';

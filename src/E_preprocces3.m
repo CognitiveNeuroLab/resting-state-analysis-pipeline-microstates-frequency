@@ -1,11 +1,11 @@
 clear variables
 eeglab
-Group = {'Aging' 'Control' 'ASD'}; %'Control'
+Group = { 'ASD' 'Control' 'Aging'}; %
 
 for g=1:length(Group)
     switch Group{g}
         case 'Control'
-            home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
+            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Control\';
             subject_list = {'12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899' '10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' };% ------------------------------------------------
         case 'ASD'
             home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
@@ -25,7 +25,7 @@ for g=1:length(Group)
         % Path to the folder containing the current subject's data
         data_path  = [home_path subject_list{s} '\\'];
         fprintf('\n\n\n**** %s: Loading dataset ****\n\n\n', subject_list{s});
-        EEG = pop_loadset('filename', [subject_list{s} '_triggerfix.set'], 'filepath', data_path);
+         EEG = pop_loadset('filename', [subject_list{s} '_triggerfix.set'], 'filepath', data_path);
         %re-referencing, if refchan is empty this get's skipped
         if isempty(refchan)~=1 %if no re-reference channels chose this gets skipped
             for j=1:length(EEG.chanlocs)
@@ -64,7 +64,6 @@ for g=1:length(Group)
         EEG = pop_runica(EEG, 'extended',1,'interupt','on','pca',pca); %using runica function, with the PCA part
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ica.set'],'filepath', data_path);
-        
         %organizing components
         clear bad_components brain_ic muscle_ic eye_ic hearth_ic line_noise_ic channel_ic other_ic
         EEG = iclabel(EEG); %does ICLable function
@@ -92,9 +91,7 @@ for g=1:length(Group)
             EEG = pop_subcomp( EEG, [bad_components], 0); %excluding the bad components
             close all
         else %instead of only plotting bad components it will plot all components
-            title(subject_list{s}); text( 0.2,0.5, 'there are no eye-components found')
-            pop_topoplot(EEG, 0, 1:length(ICA_components) ,subject_list{s},[ceil(sqrt(length(ICA_components))) ceil(sqrt(length(ICA_components)))] ,0,'electrodes','on');
-            title(subject_list{s});
+            title(subject_list{s}); text( 0.2,0.5, 'there are no eye-components found')    
             print([figure_path subject_list{s} '_Bad_ICs_topos'], '-dpng' ,'-r300');
         end
         title(subject_list{s});

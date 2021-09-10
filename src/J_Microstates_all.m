@@ -44,9 +44,7 @@ for g=1:length(Group)
         EEG = pop_micro_selectNmicro( EEG ); % only select CV and GEV, look for where GEV doesn't increase significantly
         [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
         for s=1:length(subject_list)
-            disp(['Importing prototypes and backfitting for dataset ' s '/' length(subject_list)])
-            x= sprintf('Importing prototypes and backfitting for dataset %s / %d.\n', s, length(subject_list))
-            disp(x)
+            sprintf('Importing prototypes and backfitting for dataset %s / %d.\n', string(s), length(subject_list))
             [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',s,'study',0);
             EEG = pop_micro_import_proto( EEG, ALLEEG, length(ALLEEG));
             %% 3.6 Back-fit microstates on EEG
