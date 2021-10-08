@@ -5,8 +5,9 @@
 clear variables
 eeglab
 close all
-Group = {'ASD'};%'Control'
+Group = {'ASD' 'Control' 'Aging'};%'Control'
 name_paradigm = 'restingstate'; % this is needed for saving the table at the end
+function_folder = 'C:\Users\dohorsth\Documents\GitHub\resting-state-analysis-pipeline-microstates-frequency\src\Functions and files\';
 for g=1:length(Group)
     switch Group{g}
         case 'Control'
@@ -35,15 +36,19 @@ for g=1:length(Group)
             EEG = pop_loadset('filename', [subject_list{s} '_clean.set'], 'filepath', data_path); %loads latest pre-proc file
             labels_good = {EEG.chanlocs.labels}.'; %saves all the channels that are in the _clean file
             EEG_temp = pop_loadset('filename', '64.set', 'filepath', home_path);
+            EEG = pop_interp(EEG, EEGinter.chanlocs, 'spherical');
             for b=1:EEG.nbchan
                 if strcmp(EEG.chanlocs(b).labels,'b32')
                     EEG.chanlocs(b).labels = 'B32'; %the channel location file used to have a typo (b32 instead of B32)
                 end
             end
-            EEG = transform_n_channels(EEG,EEG_temp.chanlocs,64);
+            oldFolder = cd;
+            cd(function_folder)
+            EEG = transform_n_channels(EEG,EEG_temp.chanlocs,64,'keep');
             %this deletes the channel location, so we add it back
             EEG = pop_editset(EEG, 'chanlocs', [home_path 'BioSemi64.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
             EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
+            cd(oldFolder)
         else
             %interpolating for 64 channels
             EEG = pop_loadset('filename', [subject_list{s} '_clean.set'], 'filepath', data_path); %loads latest pre-proc file

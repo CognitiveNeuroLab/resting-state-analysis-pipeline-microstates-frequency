@@ -8,7 +8,7 @@
 % ------------------------------------------------
 clear variables
 eeglab
-group = {'Aging' 'ASD' 'Control'};% 
+group = {'Aging' 'ASD' 'Control'};%
 for g=1:length(group)
     if strcmp(group{g},'ASD')
         subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1108' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11369' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
@@ -64,12 +64,12 @@ for g=1:length(group)
         end
         %adding channel location
         if EEG.nbchan >63 && EEG.nbchan < 95 %64chan cap (can be a lot of externals, this makes sure that it includes a everything that is under 96 channels, which could be an extra ribbon)
-            EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer  
+            EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
         elseif EEG.nbchan >159 && EEG.nbchan < 191 %160chan cap
             if isempty(EEG.chanlocs) && EEG.nbchan==160
                 EEG = pop_editset(EEG, 'chanlocs', [home_path 'Cap160_fromBESAWebpage.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
             else
-                EEG=pop_chanedit(EEG, 'lookup',[home_path 'Cap160_fromBESAWebpage.sfp']); %make sure you put here the location of this file for your computer  
+                EEG=pop_chanedit(EEG, 'lookup',[home_path 'Cap160_fromBESAWebpage.sfp']); %make sure you put here the location of this file for your computer
             end
         end
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
