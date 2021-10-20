@@ -24,15 +24,19 @@ This is still a work in progress. This Repo will contain the full pipeline to an
 
 **Table of Contents**
 1. [About The Project](#about-the-project)  
-2. [Getting started](#getting-started)
+2. [Getting started](#getting-started)  
     - [Prerequisites](#prerequisites)  
-3. [Resting state project](#resting-state-project)
-3. [Pipeline](#pipeline)  
-    - [Raw data to .set and merge](#raw-data-to-.set-and-merge)
-    - [Pre processing](#pre-processing)  
-3. [License](#license)
-3. [Contact](#contact)
-3. [Acknowledgement](#acknowledgement)
+3. [Resting state project](#resting-state-project)  
+3. [Pipeline](#pipeline)
+    - [Raw data to .set and merge](#raw-data-to-.set-and-merge)  
+    - [Pre processing](#pre-processing) 
+3. [Power Frequency Analysis](#power-frequency-analysis)  
+3. [Microstates](#microstates)  
+    - [I_Mictrostates_groups](#i_mictrostates_groups)  
+    - [I_Mictrostates_all](#i_mictrostates_all)    
+3. [License](#license)  
+3. [Contact](#contact)  
+3. [Acknowledgement](#acknowledgement)  
 
 
 
@@ -115,12 +119,17 @@ After that we use the the [pwelch function of Matlab](https://www.mathworks.com/
 
 # add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
 
-### Microstates Groups & all
+
+### Microstates
 this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide. [See their guide in bioRxiv for more information.](https://www.biorxiv.org/content/10.1101/289850v1)
 
-In the first part the analysis only focuses on the group level. Since we use both eyes open and eyes closed data, we want to check how many microstates are suggested for both, so we can choose the best (same) amount for both. In the case of patient/control group we would need to compare all 4 the suggestions. Running the whole script would take a lot of time that wasn't needed.
+#### I_Mictrostates_groups
+In the We first focuses on the group level. Since we use both eyes open and eyes closed data, we want to check how many microstates are suggested for both, so we can choose the best (same) amount for both. In the case of patient/control group we would need to compare all 4 the suggestions. Running the whole script would take a lot of time that wasn't needed.
 
-The second script will do everything again (since now you know how many microstates you want) and backfits it on the individual EEGs. Giving both plots per subject and adds data to the EEG structure to do stats on.
+#### J_Microstates_all
+
+The second script will backfit the mictrostates on the individual EEGs (since now you know how many microstates you want). Giving both plots per subject and adds data to the EEG structure to do stats on.  
+
 
 
 ## License

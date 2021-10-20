@@ -7,7 +7,7 @@
 clear variables
 
 
-Group = 'Control';% 'ASD' 'Control'};%'Control'
+Group = 'Aging';% 'ASD' 'Control'};%'Control'
 type={'EO' 'EC'};
 
 
