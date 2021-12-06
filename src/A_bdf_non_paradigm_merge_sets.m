@@ -1,11 +1,11 @@
-% Testing the scr code 6/21/2021
+% Restingstate pipepline (2021)
+% Final version of SRC code 12/6/2021
+% Merging script to create .set file for files that were collected without
+% using paradigm (particpant was told to close eyes or stare at the center
+% of a black screen)
 % ------------------------------------------------
-%% extra controls
 clear variables
-%_closed.bdf
-%_open.bdf
-subject_list = {'10399' '12002' '12122'};
-%subject_list = {'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956'};
+subject_list = {'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956' '10399' '12002' '12122'};
 %subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912'};
 filename     = 'restingstate'; % if your bdf file has a name besides the ID of the participant (e.g. oddball_paradigm)
 home_path    = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\'; %place data is (something like 'C:\data\')
