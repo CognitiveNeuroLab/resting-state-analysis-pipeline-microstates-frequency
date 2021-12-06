@@ -1,10 +1,12 @@
-% Restingstate pipeline 8/24/2021 DH AF PS
+% Restingstate pipepline (2021)
+% Final version of SRC code 12/6/2021
 % fixing channel names for people with 160 config file with only 64 channels
 % downsample
 % exclude externals
 % 1hz and 50hz filter
 % channel info
 % exclude channels
+% excluding bad burst of data (added 12/6/2021, everything ran before does not use this)
 % ------------------------------------------------
 clear variables
 eeglab
@@ -24,6 +26,7 @@ for g=1:length(group)
         home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
     end
     deleted_channels=zeros(length(subject_list),2);
+    deleted_data=zeros(length(subject_list),2);
     wrongconfig_type2 = zeros(1,length(subject_list));
     % Loop through all subjects
     for s=1:length(subject_list)
@@ -77,12 +80,21 @@ for g=1:length(group)
         end
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
         old_n_chan = EEG.nbchan;
-        EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','on','Distance','Euclidian');
+        old_samples=EEG.pnts;
+        %old way, only channel rejection - used for Aging and ASD: 
+        %EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','on','Distance','Euclidian');
+        %new way, also bad data (bursts) rejection:
+        % the only thing to double check is if it will still reject eye
+        % components in ICA or if these are pre-deleted now (which they shouldn't)
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',20,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
         new_n_chan = EEG.nbchan;
+        new_samples=EEG.pnts;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;
+        deleted_data(s,:) = [string(subject_list{s}), new_n_chan/old_samples*100] ;
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exchn.set'],'filepath', data_path);
     end
     %saving matrixes for quality control
     save([home_path 'wrongconfig_type2'], 'wrongconfig_type2');
-    save([home_path '_deleted_channels'], 'deleted_channels')
+    save([home_path '_deleted_channels'], 'deleted_channels');
+    save([home_path '_deleted_data']    , 'deleted_data');
 end
