@@ -1,7 +1,9 @@
-%this script needs work. 
-% 1) It should load the EO and EC data 
-% 2) combine all the channels that that should be grouped and average them
-% 3) compute the power on these 
+% Restingstate pipepline (2021)
+% SRC code 12/6/2021 - not final version
+% this script loads separatly the EO and EC data
+% calculates the Power Spectrum Density for pre-selected channels
+% does a log transform and saves all participant results
+% script is writen by Filip and edited by Douwe
 
 clear variables
 eeglab
@@ -34,30 +36,26 @@ for group_count = 1:length(group)
         trigger50_51_same = [];
         trigger_times=num2cell(zeros(length(subject_list),5));        
     end
-    path_1 = ['C:\Users\dohorsth\Desktop\Testing restingstate\' group{group_count} '\'];
+    path_1 = ['\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\' group{group_count} '\'];
     
     for subject_list_count = 1:length(subject_list)
         path  = [path_1 subject_list{subject_list_count} '\'];
-        EEG = pop_loadset('filename',[subject_list{subject_list_count} '_EO.set'],'filepath', path );
-        EEG = pop_loadset('filename',[subject_list{subject_list_count} '_EC.set'],'filepath', path );
-        %% separate EO from EC
-        
+        EEG_EO = pop_loadset('filename',[subject_list{subject_list_count} '_EO.set'],'filepath', path );
+        EEG_EC = pop_loadset('filename',[subject_list{subject_list_count} '_EC.set'],'filepath', path );
         %% grouping data of different channels
-        data_ch1_ch2_ch3= [EEG.data(1,:);EEG.data(3,:)]; %select here the channels you want to include
-        data_ch1_ch2_ch3=mean(data_ch1_ch2_ch3); % here it turns it into an average
-        
-        
+        %data_ch1_ch2_ch3= [EEG.data(1,:);EEG.data(3,:)]; %select here the channels you want to include
+        %data_ch1_ch2_ch3=mean(data_ch1_ch2_ch3); % here it turns it into an average
         %% Compute Power
-        CPz = 32;
+        CPz = 32; %to change this to different channels look in EEG.chanlocs what number goes with what channel
         Pz  = 31;
         Cz  = 48;
         
-        [P_EO_CPz freqs] = pwelch(data_EO(CPz,:),len,[],nfft,Fs);  %does not produce an image with outputs
-        P_EO_Pz          = pwelch(data_EO(Pz,:),len,[],nfft,Fs);  %does not produce an image with outputs
-        P_EO_Cz          = pwelch(data_EO(Cz,:),len,[],nfft,Fs);  %does not produce an image with outputs
-        P_EC_CPz         = pwelch(data_EC(CPz,:),len,[],nfft,Fs);  %does not produce an image with outputs
-        P_EC_Pz          = pwelch(data_EC(Pz,:),len,[],nfft,Fs);  %does not produce an image with outputs
-        P_EC_Cz          = pwelch(data_EC(Cz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        [P_EO_CPz freqs] = pwelch(EEG_EO.data(CPz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        P_EO_Pz          = pwelch(EEG_EO.data(Pz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        P_EO_Cz          = pwelch(EEG_EO.data(Cz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        P_EC_CPz         = pwelch(EEG_EC.data(CPz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        P_EC_Pz          = pwelch(EEG_EC.data(Pz,:),len,[],nfft,Fs);  %does not produce an image with outputs
+        P_EC_Cz          = pwelch(EEG_EC.data(Cz,:),len,[],nfft,Fs);  %does not produce an image with outputs
         
         PSD_EO_CPzlog(:,subject_list_count) = 10*log10(P_EO_CPz);
         PSD_EO_Pzlog(:,subject_list_count)  = 10*log10(P_EO_Pz);
@@ -69,3 +67,4 @@ for group_count = 1:length(group)
     end  
 end
 
+save([path_1 'PSD_results'],'freqs', 'PSD_EO_CPzlog', 'SD_EO_Pzlog',  'PSD_EO_Czlog', 'PSD_EC_CPzlog', 'PSD_EC_Pzlog', 'PSD_EC_Czlog');
