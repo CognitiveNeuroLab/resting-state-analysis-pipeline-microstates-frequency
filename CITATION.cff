@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Horsthuis"
+  given-names: "Douwe J"
+- family-names: "A Francisco"
+  given-names: "Ana"
+- family-names: "Molholm"
+  given-names: "Sophie"
+- family-names: "De Sanctis"
+  given-names: "Pierfilippo"  
+title: "resting-state-analysis-pipeline-microstates-frequency"
+version: 1.0
+doi: 10.5281/zenodo.5764975
+date-released: 2021-12-07
+url: "https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency"
