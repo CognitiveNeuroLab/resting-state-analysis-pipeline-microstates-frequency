@@ -86,7 +86,7 @@ for g=1:length(group)
         %new way, also bad data (bursts) rejection:
         % the only thing to double check is if it will still reject eye
         % components in ICA or if these are pre-deleted now (which they shouldn't)
-        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',20,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
         new_n_chan = EEG.nbchan;
         new_samples=EEG.pnts;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;
