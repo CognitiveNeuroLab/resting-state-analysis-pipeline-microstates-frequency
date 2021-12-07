@@ -61,7 +61,6 @@ for g=1:length(Group)
             end
         end
         EEG = eeg_checkset( EEG );
-        
         %another re-ref to the averages as suggested for the ICA
         EEG = pop_reref( EEG, []);
         EEG = eeg_checkset( EEG );
@@ -76,8 +75,7 @@ for g=1:length(Group)
         end
         %Independent Component Analysis
         EEG = eeg_checkset( EEG );
-        %pca = EEG.nbchan-1; %the PCA part of the ICA needs stops the rank-deficiency % pre 12/6/2021
-        pca = rank(EEG.data); %this takes care of avg ref and bridge channels
+        pca = EEG.nbchan-1; %the PCA part of the ICA needs stops the rank-deficiency % pre 12/6/2021 , is not accurate but so far the best we can do. Does not take bridging in account, but neither would the normal ICA function, which misses the avg ref sometimes
         EEG = pop_runica(EEG, 'extended',1,'interupt','on','pca',pca); %using runica function, with the PCA part
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ica.set'],'filepath', data_path);
