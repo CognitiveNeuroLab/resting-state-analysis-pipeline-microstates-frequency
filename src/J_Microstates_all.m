@@ -1,4 +1,6 @@
-%this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide.
+% Restingstate pipepline (2021)
+% SRC code 12/6/2021 - final version
+% this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide.
 % adapted for our pipeline on 8/27/2021 by Douwe
 
 clear variables

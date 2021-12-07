@@ -1,22 +1,21 @@
+% Restingstate pipepline (2021)
+% Final version of SRC code 12/6/2021
 % this script fixes events and makes sure that everyone has the same events
-% there are 2 people with the wrong triggers (63539 & 63538 (wrong?) & 63488)
-% there are 2 people without a trigger but we have the logfile with the time
-% there are several people with 255 as an extra trigger
-%clear variables
-%eeglab
+% this is needed because 1) some people have bad data that included events
+% deleted. 2) if data was collected without paradigm, there was no trigger
+
+clear variables
+eeglab
 Group = 'Control'; % 'Control'  'ASD' 'Aging'
 
 switch Group
     case 'Control'
-        %         home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
-        %       %% aged matched controls
-        %subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
+        %% aged matched controls
+        %subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394'
+        home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';'10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
         %% extra controls
         subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
         home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
-        % did these again because need extra channels deleted
-        % subject_list = {'12139' '10399'};
-        % home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
         
         participant_info = num2cell(zeros(length(subject_list),9));
     case 'ASD'
@@ -114,4 +113,4 @@ for s=1:length(subject_list)
     end
     participant_info(s,:)= [subject_list(s), trigger_info, trigger_225, length(EEG.etc.clean_channel_mask), EEG.nbchan, 100-(EEG.nbchan/length(EEG.etc.clean_channel_mask)*100), EEG.xmax,final_triggers];
 end
-save([home_path 'participant_info_160chn'], 'participant_info');
+save([home_path 'participant_info'], 'participant_info');

@@ -32,8 +32,9 @@ This is still a work in progress. This Repo will contain the full pipeline to an
     - [Pre processing](#pre-processing) 
 3. [Power Frequency Analysis](#power-frequency-analysis)  
 3. [Microstates](#microstates)  
-    - [I_Mictrostates_groups](#i_mictrostates_groups)  
-    - [I_Mictrostates_all](#i_mictrostates_all)    
+    - [I_Mictrostates_groups](#i-mictrostates-groups)  
+    - [I_Mictrostates_all](#i-mictrostates-all)
+3. [Extra functions](#extra-functions)
 3. [License](#license)  
 3. [Contact](#contact)  
 3. [Acknowledgement](#acknowledgement)  
@@ -88,25 +89,26 @@ One of the issues we encountered was that some participants had their data colle
 The data is down-sampled from 512Hz to 256 Hz.  
 Externals are all deleted since not everyone has externals. So we cannot use them as a reference.  
 We apply a 1Hz (filter order 1690) and 50Hz (filter order 136) filter.
-We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, Cap160_fromBESAWebpage, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data. You can find these in the Functions and files folder (inside the src folder).  
-Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 4 seconds and the function checks if channels are overly correlated with each other. **double check this last statement**
+We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, BioSemi160, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data. You can find these in the Functions and files folder (inside the src folder).  
+Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 5 seconds and the function checks if channels are overly correlated with each other. The function also deletes continues data if there is bad data. It breaks the data in 0.5 second steps. Data is bad if it off by 5 std dev. Which is a "A quite conservative" and default value according to the function.
 
 #### C_manual_check
 This script plots all the data in EEGlab as continues data and allows you to delete channels manually. 
 
 #### D_preprocces2
-This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each individual participant. **This script can be skipped** It is only useful for documenting triggers. We added the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) in the next script and this deletes triggers sometimes, so we need to double check triggers again (see [G_preprocces5](#g_preprocces5)).
+This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each individual participant. **This script can be skipped** It is only useful for documenting triggers. We added the ~~ [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) in the next script and this deletes triggers sometimes~~, so we need to double check triggers again (see [G_preprocces5](#g_preprocces5)).
+Since off the 12/6/2021 update this is not the case. The clean_artifacts takes care of noisy continues data. But it might be good to run either script since they are quick. If you want to save time, skip this one.
 
 #### E_preprocces3
 This script will do an average reference.  
 This is followed by an [Independent Component Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html). We use the pca option to prevent rank-deficiencies.
-After his we delete only eye components by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 10% brain data. We arrived at this criteria after comparing (for a different dataset) how many components we (Ana, Douwe and Filip) would delete manually and what threshold would get the closesed to that.
-After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m). This function epochs the data temporatly and deletes the epochs that are noisy. We set this to a threshold of 8, because this would delete between 0-20% of the data. We save a matlab structure with how much data of each participant get's deleted. 
+After his we delete only eye components by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 10% brain data. We arrived at this criteria after comparing (for a different dataset) how many components we (Ana, Douwe and Filip) would delete manually and what threshold would get the closest to that.
+After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m). This function epochs the data temporally and deletes the epochs that are noisy. We set this to a threshold of 8, because this would delete between 0-20% of the data. We save a matlab structure with how much data of each participant get's deleted. 
 
 **note** for the Aging group, we use the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) function also right before the ICA. This is because the data was too noisy for more than 50% of the participants to find eye components. 
 
 #### F_preprocces4
-This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding's subjects data.  
+This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding subject's data.  
 In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
 
 #### G_preprocces5
@@ -115,13 +117,13 @@ In this script, we first make sure that the triggers are still in the right plac
 ### Power Frequency Analysis
  
 
-After that we use the the [pwelch function of Matlab](https://www.mathworks.com/help/signal/ref/pwelch.html) and a log tranformation of the results to get the power frequency results.  
+After that we use the the [pwelch function of Matlab](https://www.mathworks.com/help/signal/ref/pwelch.html) and a log transformation of the results to get the power frequency results.  
 
-# add here what channels we use, for now it's just indivual but we will change this to groups and averages of those groups
+for now we are only using pre-selected channels. But it's possible to take averages and or instead do this for every channel.
 
 
 ### Microstates
-this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide. [See their guide in bioRxiv for more information.](https://www.biorxiv.org/content/10.1101/289850v1)
+this script follows the code as described in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide. [See their guide in bioRxiv for more information.](https://www.biorxiv.org/content/10.1101/289850v1)
 
 #### I_Mictrostates_groups
 In the We first focuses on the group level. Since we use both eyes open and eyes closed data, we want to check how many microstates are suggested for both, so we can choose the best (same) amount for both. In the case of patient/control group we would need to compare all 4 the suggestions. Running the whole script would take a lot of time that wasn't needed.
@@ -130,7 +132,9 @@ In the We first focuses on the group level. Since we use both eyes open and eyes
 
 The second script will backfit the mictrostates on the individual EEGs (since now you know how many microstates you want). Giving both plots per subject and adds data to the EEG structure to do stats on.  
 
-
+#### Extra functions  
+  
+Because this script uses both 160 and 64 channel collected with biosemi caps we needed to get the to a same format. To do this we are using the transform_n_channels function [documented here](https://github.com/CognitiveNeuroLab/Interpolating-channels-between-different-cap-sizes). In this case it turns all the 160 channel data into 64 channels. But it will keep the original channels that are closed to the location of the corresponding 64ch cap.
 
 ## License
 

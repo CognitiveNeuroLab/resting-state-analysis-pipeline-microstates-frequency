@@ -1,7 +1,9 @@
+% Restingstate pipepline (2021)
+% Final version of SRC code 12/6/2021
 % this scripts interpolates channels using the _info.set file and the _clean.set file. It
 % creates a matrix with all the previously deleted channels. If a
 % particpant has 160 channels, their data gets interpolated to 64 channels
-% Created by Douwe Horsthuis last update on 8/24/202
+% Created by Douwe Horsthuis 
 clear variables
 eeglab
 close all
@@ -36,14 +38,16 @@ for g=1:length(Group)
             EEG = pop_loadset('filename', [subject_list{s} '_clean.set'], 'filepath', data_path); %loads latest pre-proc file
             labels_good = {EEG.chanlocs.labels}.'; %saves all the channels that are in the _clean file
             EEG_temp = pop_loadset('filename', '64.set', 'filepath', home_path);
+            %need to interpolate first so that we are sure everyone has their full 160ch
             EEG = pop_interp(EEG, EEGinter.chanlocs, 'spherical');
             for b=1:EEG.nbchan
                 if strcmp(EEG.chanlocs(b).labels,'b32')
                     EEG.chanlocs(b).labels = 'B32'; %the channel location file used to have a typo (b32 instead of B32)
                 end
             end
-            oldFolder = cd;
+            oldFolder = cd; %this is where the function should be
             cd(function_folder)
+            % using the transform_n_channels function to change 160ch data into 64 channel
             EEG = transform_n_channels(EEG,EEG_temp.chanlocs,64,'keep');
             %this deletes the channel location, so we add it back
             EEG = pop_editset(EEG, 'chanlocs', [home_path 'BioSemi64.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
