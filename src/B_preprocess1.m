@@ -73,9 +73,9 @@ for g=1:length(group)
             EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
         elseif EEG.nbchan >159 && EEG.nbchan < 191 %160chan cap
             if isempty(EEG.chanlocs) && EEG.nbchan==160
-                EEG = pop_editset(EEG, 'chanlocs', [home_path 'Cap160_fromBESAWebpage.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
+                EEG = pop_editset(EEG, 'chanlocs', [home_path 'BioSemi160.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
             else
-                EEG=pop_chanedit(EEG, 'lookup',[home_path 'Cap160_fromBESAWebpage.sfp']); %make sure you put here the location of this file for your computer
+                EEG=pop_chanedit(EEG, 'lookup',[home_path 'BioSemi160.sfp']); %make sure you put here the location of this file for your computer
             end
         end
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
