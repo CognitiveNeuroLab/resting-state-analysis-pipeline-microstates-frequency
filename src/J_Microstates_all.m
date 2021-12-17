@@ -18,12 +18,12 @@ for g=1:length(Group)
             home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
             subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11293' '11325' '11354' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants;
         case 'Aging' %excluding '12094' deleted too much data
-            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Aging\';
+            home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Aging\';
             subject_list = {'12022' '12023' '12031' '12081'  '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
     end
     
     for t=1:length(type)
-        save_path  = [home_path '\Microstates\' type{t} '\'];
+        save_path  = [home_path 'Microstates\' type{t} '\'];
         eeglab
         for s=1:length(subject_list)
             data_path  = [home_path subject_list{s} ''];% Path to the folder containing the current subject's data
@@ -45,6 +45,7 @@ for g=1:length(Group)
         
         EEG = pop_micro_selectNmicro( EEG ); % only select CV and GEV, look for where GEV doesn't increase significantly
         [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
+        EEG = pop_saveset( EEG, 'filename',[group '_microstate_' type{t} '.set'],'filepath', home_path);    
         for s=1:length(subject_list)
             sprintf('Importing prototypes and backfitting for dataset %s / %d.\n', string(s), length(subject_list))
             [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',s,'study',0);
@@ -61,6 +62,12 @@ for g=1:length(Group)
                 'polarity', 0 );
             [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
         end
+        %% creating arrays to save data in 
+        Microstate=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1); GFP=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
+        Occurence=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;Duration=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ; 
+        Coverage=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;GEV=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
+        ID=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
+        %%
         for s=1:length(subject_list)
             [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',s,'study',0);
             figure('units','normalized','outerposition',[0 0 1 1]);[tt]=title(subject_list(s));tt.FontSize = 35; MicroPlotSegments( EEG, 'label_type', 'backfit', ...
@@ -68,6 +75,19 @@ for g=1:length(Group)
             print([save_path subject_list{s} '_microstate_' type{t}], '-djpeg' ,'-r300');
             close all
             EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_microstate_' type{t} '.set'],'filepath', data_path);
+            
+            %% creating datafiles to save for stats
+            Microstate(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=(1:length(EEG.microstate.stats.TP));
+            GFP(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=EEG.microstate.stats.Gfp';
+            Occurence(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=EEG.microstate.stats.Occurence';
+            Duration(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=EEG.microstate.stats.Duration';
+            Coverage(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=EEG.microstate.stats.Coverage';
+            GEV(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=EEG.microstate.stats.GEV';
+            ID(s*length(EEG.microstate.stats.TP)-3:s*length(EEG.microstate.stats.TP),1)=str2double(repelem(subject_list(s),length(EEG.microstate.stats.TP))'); %repeated variable with the ID number         
         end
+       Microstate_table=table(ID,Microstate,GFP,Occurence,Duration,Coverage,GEV);
+       filename_table = [save_path 'Microstate_table_' Group{g} '_' type{t} '.xlsx'];
+       writetable(Microstate_table, filename_table);
     end
 end
+
