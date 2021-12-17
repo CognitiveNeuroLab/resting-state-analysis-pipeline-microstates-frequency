@@ -9,7 +9,7 @@
 %-  double check if logtransform is only for PSD or also when only doing power
 
 clear variables
-%eeglab
+eeglab
 
 %% pwelch settings
 WINDOW = []; %The size of the window, optimal is 8 segments with 50% overlap, which is what it will try to do if you leave it empty. (pwelch will cut data in segments and calculate on these indiv segments)
@@ -21,13 +21,15 @@ SPECTRUMTYPE = 'power'; %Use the 'power' option to obtain an estimate of the pow
 channel=48;% see EEG_EC.chanlocs for the number for all channels and names
 ch_name='Cz';% CPz = 32; Pz  = 31; Cz  = 48;
 %% How to save the final table
-file_type='matlab';%saves the final table as either 'excel' or 'matlab'
+file_type='excel';%saves the final table as either 'excel' or 'matlab'
 if strcmp(file_type,'matlab')
     prompt = 'Do you want to save it as an table (write table) or idividual arrays (write array)?';
     how_to_save = input(prompt,'s');
     if ~strcmp(how_to_save,'table') && ~strcmp(how_to_save,'array')
         error('either type table or return so matlab can save your files; this error message was made on purpose')
     end
+else
+    how_to_save='table';
 end
 %% what group to run
 group= {'Aging' };%'Control' 'ASD'};
@@ -60,21 +62,13 @@ for group_count = 1:length(group)
             [ power_EC(i,:), f] = pwelch(EEG_EC.data(i,:),WINDOW,NOVERLAP,NFFT,Fs,SPECTRUMTYPE);
         end
         if strcmp(how_to_save,'table') || strcmp(file_type,'excel')
-            if subject_list_count==1
-                Power_EO_CH1(1:129,:)=power_EO(channel,:);
-                Power_EC_CH1(1:129,:)=power_EC(channel,:);
-                Power_EO_CH1_LOG(1:129,:)=10*log10(power_EO(channel,:))';%need to do a logtransformation
-                Power_EC_CH1_LOG(1:129,:)=10*log10(power_EC(channel,:))';%need to do a logtransformation
-                ID(1:129,:)=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
-                freq(1:129,:)=f;%all frequencies
-            else
-                Power_EO_CH1((subject_list_count-1)*129+1:subject_list_count*129,:)=power_EO(channel,:);
-                Power_EC_CH1((subject_list_count-1)*129+1:subject_list_count*129,:)=power_EC(channel,:);
-                Power_EO_CH1_LOG((subject_list_count-1)*129+1:subject_list_count*129,:)=10*log10(power_EO(channel,:))';%need to do a logtransformation
-                Power_EC_CH1_LOG((subject_list_count-1)*129+1:subject_list_count*129,:)=10*log10(power_EC(channel,:))';%need to do a logtransformation
-                ID((subject_list_count-1)*129+1:subject_list_count*129,:)=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
-                freq((subject_list_count-1)*129+1:subject_list_count*129,:)=f;%all frequencies
-            end
+            Power_EO_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EO(channel,:);
+            Power_EO_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EO(channel,:);
+            Power_EC_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EC(channel,:);
+            Power_EO_CH1_LOG(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=10*log10(power_EO(channel,:))';%need to do a logtransformation
+            Power_EC_CH1_LOG(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=10*log10(power_EC(channel,:))';%need to do a logtransformation
+            ID(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
+            freq(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=f;%all frequencies
         else
             Power_EO_CH1(:,subject_list_count)=power_EO(channel,:)';
             Power_EC_CH1(:,subject_list_count)=power_EC(channel,:)';
