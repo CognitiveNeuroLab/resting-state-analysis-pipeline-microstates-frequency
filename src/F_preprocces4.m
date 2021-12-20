@@ -71,5 +71,5 @@ for g=1:length(Group)
         participant_badchan(s,:)   = data_subj;%combine new data with old data
         clear EEG_temp EEGinter
     end
-    save([home_path name_paradigm '_participant_interpolation_info'], 'participant_badchan');
+    save([home_path  'participant_interpolation_info_' Group{g}], 'participant_badchan');
 end

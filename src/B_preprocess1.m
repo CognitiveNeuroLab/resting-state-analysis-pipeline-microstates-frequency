@@ -94,7 +94,7 @@ for g=1:length(group)
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exchn.set'],'filepath', data_path);
     end
     %saving matrixes for quality control
-    save([home_path '_' group{g} 'wrongconfig_type2'], 'wrongconfig_type2');
-    save([home_path '_' group{g} '_deleted_channels'], 'deleted_channels');
-    save([home_path '_' group{g} '_deleted_data']    , 'deleted_data');
+    save([home_path  'wrongconfig_type2_' group{g}], 'wrongconfig_type2');
+    save([home_path  'deleted_channels_' group{g}], 'deleted_channels');
+    save([home_path  'deleted_data_' group{g}]    , 'deleted_data');
 end

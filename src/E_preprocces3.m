@@ -145,6 +145,6 @@ for g=1:length(Group)
         subj_comps=[subject_list(s), num2cell(brain_ic), num2cell(muscle_ic), num2cell(eye_ic), num2cell(hearth_ic), num2cell(line_noise_ic), num2cell(channel_ic), num2cell(other_ic)];
         components(s,:)=[subj_comps];
     end
-    save([home_path 'components'], 'components');
-    save([home_path 'deleted_data'], 'deleted_data');
+    save([home_path 'components_' Group{g} ], 'components');
+    save([home_path 'deleted_data_' Group{g}], 'deleted_data');
 end

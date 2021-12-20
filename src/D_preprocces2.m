@@ -113,4 +113,4 @@ for s=1:length(subject_list)
     end
     participant_info(s,:)= [subject_list(s), trigger_info, trigger_225, length(EEG.etc.clean_channel_mask), EEG.nbchan, 100-(EEG.nbchan/length(EEG.etc.clean_channel_mask)*100), EEG.xmax,final_triggers];
 end
-save([home_path 'participant_info'], 'participant_info');
+save([home_path 'participant_info_' Group], 'participant_info');
