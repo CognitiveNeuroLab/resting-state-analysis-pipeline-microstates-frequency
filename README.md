@@ -17,7 +17,7 @@
 
 ## About The Project
 
-This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This  is work from [Ana Francisco](https://github.com/anafrancisco) [Douwe Horsthuis](https://github.com/DouweHorsthuis) and [Filip de Sanctis](https://github.com/pdesanctis) 
+This is still a work in progress. This Repo will contain the full pipeline to analyse resting state data, in Matlab using EEGlab. The pipeline will contain everything from pre-processing to creating microstates and doing a power/frequency analysis. This  is work from [Ana Francisco](https://github.com/anafrancisco) [Douwe Horsthuis](https://github.com/DouweHorsthuis) and [Filip de Sanctis](https://github.com/pdesanctis) in discussion with Sophie Molholm. 
 
 
 
@@ -119,7 +119,7 @@ In this script, we first make sure that the triggers are still in the right plac
 
 After that we use the the [pwelch function of Matlab](https://www.mathworks.com/help/signal/ref/pwelch.html) and a log transformation of the results to get the power frequency results.  
 
-for now we are only using pre-selected channels. But it's possible to take averages and or instead do this for every channel.
+for now we are only using 1 pre-selected channel to save data. This data can either be saved as an excel file, which is easy to use for stats in different platforms, or as a table or individual variable in Matlab.
 
 
 ### Microstates
@@ -130,7 +130,7 @@ In the We first focuses on the group level. Since we use both eyes open and eyes
 
 #### J_Microstates_all
 
-The second script will backfit the mictrostates on the individual EEGs (since now you know how many microstates you want). Giving both plots per subject and adds data to the EEG structure to do stats on.  
+The second script will backfit the mictrostates on the individual EEGs (since now you know how many microstates you want). Giving both plots per subject and adds data to the EEG structure to do stats on. We select the imporant data of each participant (participant ID, amount of microstates, GFP, Occurence, Duration, Coverage and GEV) and save this in an excel file per group and whether it's eyes open or eyes closed. 
 
 #### Extra functions  
   
