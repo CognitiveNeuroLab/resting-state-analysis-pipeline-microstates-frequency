@@ -10,14 +10,14 @@
 % ------------------------------------------------
 clear variables
 eeglab
-group = {'Control'};%
+group = {'Control' '22q' 'schiz'};%
 for g=1:length(group)
-    if strcmp(group{g},'ASD')
+    if strcmp(group{g},'22q')
         subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1108' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11369' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
+        home_path  = 'D:\Data\';
     elseif strcmp(group{g},'Aging')
         subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Aging\';
+        home_path  = 'D:\Data\';
     elseif strcmp(group{g},'Control')
         %% extra controls
         subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12449' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
@@ -90,11 +90,11 @@ for g=1:length(group)
         new_n_chan = EEG.nbchan;
         new_samples=EEG.pnts;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;
-        deleted_data(s,:) = [string(subject_list{s}), new_n_chan/old_samples*100] ;
+        deleted_data(s,:) = [string(subject_list{s}), new_samples/old_samples*100] ;
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exchn.set'],'filepath', data_path);
     end
     %saving matrixes for quality control
-    save([home_path 'wrongconfig_type2'], 'wrongconfig_type2');
-    save([home_path '_deleted_channels'], 'deleted_channels');
-    save([home_path '_deleted_data']    , 'deleted_data');
+    save([home_path '_' group{g} 'wrongconfig_type2'], 'wrongconfig_type2');
+    save([home_path '_' group{g} '_deleted_channels'], 'deleted_channels');
+    save([home_path '_' group{g} '_deleted_data']    , 'deleted_data');
 end
