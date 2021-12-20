@@ -1,14 +1,14 @@
 % Restingstate pipepline (2021)
 % SRC code 12/6/2021 - final version
 % this script follows the code as descibed in Poulsen, A. T., Pedroni, A., Langer, N., & Hansen, L. K. (2018). Microstate EEGlab toolbox: An introductory guide.
-% adapted for our pipeline on 8/27/2021 by Douwe
+% adapted for our pipeline on 12/20/2021 by Douwe
 
 clear variables
 
 
 Group = {'Aging'};% 'ASD' 'Control'};%'Control'
 type={'EO' 'EC'};
-
+n_microstates=4;%how many microstates should be plotted
 for g=1:length(Group)
     switch Group{g}
         case 'Control' %excluding '10534' deleted too much data
@@ -21,7 +21,11 @@ for g=1:length(Group)
             home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Aging\';
             subject_list = {'12022' '12023' '12031' '12081'  '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
     end
-    
+            %% creating arrays to save data in 
+        Microstate=zeros(n_microstates*length(subject_list),1); GFP=zeros(length(n_microstates)*length(subject_list),1) ;
+        Occurence=zeros(n_microstates*length(subject_list),1) ;Duration=zeros(length(n_microstates)*length(subject_list),1) ; 
+        Coverage=zeros(n_microstates*length(subject_list),1) ;GEV=zeros(length(n_microstates)*length(subject_list),1) ;
+        ID=zeros(n_microstates*length(subject_list),1) ;
     for t=1:length(type)
         save_path  = [home_path 'Microstates\' type{t} '\'];
         eeglab
@@ -37,15 +41,16 @@ for g=1:length(Group)
         eeglab redraw
         [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, length(ALLEEG)-1,'retrieve',length(ALLEEG),'study',0); %this should select the last one, but not sure how to make it do that for sure
         eeglab redraw
-        EEG = pop_micro_segment( EEG, 'algorithm', 'modkmeans', 'sorting', 'Global explained variance', 'normalise', 0, 'Nmicrostates', 2:8, 'verbose', 1, 'Nrepetitions', 50, 'fitmeas', 'CV', 'max_iterations', 1000, 'threshold', 1e-06, 'optimised', 0 );
+        EEG = pop_micro_segment( EEG, 'algorithm', 'modkmeans', 'sorting', 'Global explained variance', 'normalise', 0, 'Nmicrostates', n_microstates, 'verbose', 1, 'Nrepetitions', 50, 'fitmeas', 'CV', 'max_iterations', 1000, 'threshold', 1e-06, 'optimised', 0 );
         
         [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
         figure;MicroPlotTopo( EEG, 'plot_range', [] ); %plotting microstates
         print([save_path 'Group_microstate'], '-djpeg','-r300');
-        
+        eeglab redraw
         EEG = pop_micro_selectNmicro( EEG ); % only select CV and GEV, look for where GEV doesn't increase significantly
+        
         [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-        EEG = pop_saveset( EEG, 'filename',[group '_microstate_' type{t} '.set'],'filepath', home_path);    
+        EEG = pop_saveset( EEG, 'filename',[Group{g} '_microstate_' type{t} '.set'],'filepath', home_path);    
         for s=1:length(subject_list)
             sprintf('Importing prototypes and backfitting for dataset %s / %d.\n', string(s), length(subject_list))
             [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',s,'study',0);
@@ -61,15 +66,8 @@ for g=1:length(Group)
             EEG = pop_micro_stats( EEG, 'label_type', 'backfit', ...
                 'polarity', 0 );
             [ALLEEG EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-        end
-        %% creating arrays to save data in 
-        Microstate=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1); GFP=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
-        Occurence=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;Duration=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ; 
-        Coverage=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;GEV=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
-        ID=zeros(length(EEG.microstate.stats.TP)*length(subject_list),1) ;
-        %%
-        for s=1:length(subject_list)
-            [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',s,'study',0);
+            EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_microstate_' type{t} '.set'],'filepath', data_path);
+            %% plotting the 
             figure('units','normalized','outerposition',[0 0 1 1]);[tt]=title(subject_list(s));tt.FontSize = 35; MicroPlotSegments( EEG, 'label_type', 'backfit', ...
                 'plotsegnos', 'first', 'plot_time', [4200 5700], 'plottopos', 1 );
             print([save_path subject_list{s} '_microstate_' type{t}], '-djpeg' ,'-r300');
