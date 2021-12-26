@@ -60,10 +60,10 @@ All of these scripts are created to run in matlab. They use EEGlab
 
 ## Resting state project
 ### Paradigm
-Explain here what the paradigm is and why some of the data does not have a paradigm. 
+This pipeline is build to analyse data collected using the Restingstate paradigm in our lab. This paradigm is essentially a 5 min trial with a fixation cross with the text "Please fixate on the cross" followed by a 5 min trial that has the text "please close your eyes". However, some of our data is collected by telling the participant instead to just look at the center of the screen, or to keep your eyes closed for 5 minutes. For this reason, the pipeline might add the triggers to keep the eyes open and eyes closed data separate.
 
 ### Groups  
-Explain what groups we have and maybe why
+This data is collected for a lot of different groups. The script is set-up in a way that you can analyse 1 to 3 groups in one go. However, there is room to add another group or simply to run the script again for a different group.
 
 ## Pipeline
 
@@ -96,7 +96,7 @@ Lastly this script uses eeglab's clean_artifacts function deletes the bad channe
 This script plots all the data in EEGlab as continues data and allows you to delete channels manually. 
 
 #### D_preprocces2
-This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each individual participant. **This script can be skipped** It is only useful for documenting triggers. We added the ~~ [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) in the next script and this deletes triggers sometimes~~, so we need to double check triggers again (see [G_preprocces5](#g_preprocces5)).
+This script will double check and fix any potential trigger issue we encountered. It saves a Matrix with the information for each individual participant. **This script can be skipped** It is only useful for documenting triggers. ~~We added the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) in the next script and this deletes triggers sometimes, so we need to double check triggers again (see [G_preprocces5](#g_preprocces5)).~~
 Since off the 12/6/2021 update this is not the case. The clean_artifacts takes care of noisy continues data. But it might be good to run either script since they are quick. If you want to save time, skip this one.
 
 #### E_preprocces3
