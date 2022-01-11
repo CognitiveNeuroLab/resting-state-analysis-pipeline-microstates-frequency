@@ -3,12 +3,16 @@ message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Horsthuis"
   given-names: "Douwe J"
-- family-names: "A Francisco"
-  given-names: "Ana"
+  orcid: "https://orcid.org/0000-0002-9711-5423"
+- family-names: "Francisco"
+  given-names: "Ana A"
+  orcid: "https://orcid.org/0000-0003-4030-0297"
 - family-names: "Molholm"
   given-names: "Sophie"
+  orcid: "https://orcid.org/0000-0003-1870-7306"
 - family-names: "De Sanctis"
   given-names: "Pierfilippo"  
+  orcid: "https://orcid.org/0000-0003-3713-7177"    
 title: "resting-state-analysis-pipeline-microstates-frequency"
 version: 1.0
 doi: 10.5281/zenodo.5764975
