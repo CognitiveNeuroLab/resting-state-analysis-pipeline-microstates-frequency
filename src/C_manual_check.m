@@ -31,4 +31,8 @@ for s=1:length(subject_list)
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exchn.set'],'filepath', data_path);
     end
     close all
+    old_length=length(EEG.times);
+    EEG = pop_rejcont(EEG, 'elecrange',1:EEG.nbchan ,'freqlimit',[20 40] ,'threshold',10,'epochlength',0.5,'contiguous',4,'addlength',0.25,'taper','hamming');
+    EEG.deleted_data = 100-length(EEG.times)/old_length*100;
+    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_cln.set'],'filepath', data_path);
 end
