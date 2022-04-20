@@ -6,24 +6,23 @@
 % 1hz and 50hz filter
 % channel info
 % exclude channels
-% excluding bad burst of data (added 12/6/2021, everything ran before does not use this)
 % ------------------------------------------------
 clear variables
 eeglab
 group = {'Control' '22q' 'schiz'};%
+lowpass_filter_hz=50; %50hz filter
+highpass_filter_hz=1; %1hz filter
+script_location= 'C:\Users\dohorsth\Documents\GitHub\resting-state-analysis-pipeline-microstates-frequency\src\';
 for g=1:length(group)
     if strcmp(group{g},'22q')
         subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1108' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11369' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
         home_path  = 'D:\Data\';
-    elseif strcmp(group{g},'Aging')
+    elseif strcmp(group{g},'schiz')
         subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
         home_path  = 'D:\Data\';
     elseif strcmp(group{g},'Control')
-        %% extra controls
-        subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12449' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
-        %% aged matched controls
-        %subject_list = {'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956' '10033' '10130' '10131' '10257' '10281' '10293' '10360' '10369' '10394' '10438' '10446' '10463' '10476' '10526' '10545' '10561' '10562' '10581' '10585' '10616' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935' '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
+        subject_list = {'10281'};%'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956' '10033' '10130' '10131' '10257' '10281' '10293' '10360' '10369' '10394' '10438' '10446' '10463' '10476' '10526' '10545' '10561' '10562' '10581' '10585' '10616' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935' '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
+        home_path  = 'C:\Users\dohorsth\Desktop\practice\';%'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
     end
     deleted_channels=zeros(length(subject_list),2);
     deleted_data=zeros(length(subject_list),2);
@@ -54,39 +53,29 @@ for g=1:length(group)
         EEG = pop_resample( EEG, 256); %downsample to 256hz
         EEG = eeg_checkset( EEG );
         %deleting externals
-        if strcmp(group{g},'Control') || strcmp(group{g},'ASD')
-            EEG = pop_select( EEG,'nochannel',{'EXG1','EXG2','EXG3','EXG4','EXG5','EXG6','EXG7','EXG8' 'GSR1' 'GSR2' 'Erg1' 'Erg2' 'Resp' 'Plet' 'Temp'});
-        end
+        EEG = pop_select( EEG,'nochannel',{'EXG1','EXG2','EXG3','EXG4','EXG5','EXG6','EXG7','EXG8' 'GSR1' 'GSR2' 'Erg1' 'Erg2' 'Resp' 'Plet' 'Temp'});
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exext.set'],'filepath', data_path);
         %filtering
-        EEG = pop_eegfiltnew(EEG, [],1,1690,1,[],1); % 1hz filter
+        EEG.filter=table(lowpass_filter_hz,highpass_filter_hz); %adding it to subject EEG file
+        EEG = pop_eegfiltnew(EEG, 'locutoff',highpass_filter_hz);
         EEG = eeg_checkset( EEG );
-        EEG = pop_eegfiltnew(EEG, [],50,136,0,[],1); %50hz filter
+        EEG = pop_eegfiltnew(EEG, 'hicutoff',lowpass_filter_hz);
         close all
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_downft.set'],'filepath', data_path);
-        if isempty(EEG.chanlocs) && EEG.nbchan==64
-            EEG = pop_editset(EEG, 'chanlocs', [home_path 'BioSemi64.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
-        end
+        EEG = pop_editset(EEG, 'chanlocs', [script_location  'Functions and files\BioSemi64.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
         %adding channel location
-        if EEG.nbchan >63 && EEG.nbchan < 95 %64chan cap (can be a lot of externals, this makes sure that it includes a everything that is under 96 channels, which could be an extra ribbon)
-            EEG=pop_chanedit(EEG, 'lookup',[home_path 'standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
-        elseif EEG.nbchan >159 && EEG.nbchan < 191 %160chan cap
-            if isempty(EEG.chanlocs) && EEG.nbchan==160
-                EEG = pop_editset(EEG, 'chanlocs', [home_path 'BioSemi160.sfp']); %need to first load any sort of sfp file with the correct channels (the locations will be overwritten to the correct ones later)
-            else
-                EEG=pop_chanedit(EEG, 'lookup',[home_path 'BioSemi160.sfp']); %make sure you put here the location of this file for your computer
-            end
-        end
+        EEG=pop_chanedit(EEG, 'lookup',[fileparts(which('eeglab')) '\plugins\dipfit\standard_BESA\standard-10-5-cap385.elp']); %make sure you put here the location of this file for your computer
+        
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_info.set'],'filepath', data_path);
         old_n_chan = EEG.nbchan;
         old_samples=EEG.pnts;
-        %old way, only channel rejection - used for Aging and ASD: 
+        %old way, only channel rejection - used for Aging and ASD:
         %EEG = clean_artifacts(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','on','Distance','Euclidian');
         %new way, also bad data (bursts) rejection:
         % the only thing to double check is if it will still reject eye
         % components in ICA or if these are pre-deleted now (which they shouldn't)
-        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
         new_n_chan = EEG.nbchan;
         new_samples=EEG.pnts;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;
