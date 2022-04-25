@@ -30,7 +30,7 @@ end
 for s=1:length(subject_list)
     data_path  = [home_path subject_list{s} '\'];
     fprintf('\n\n\n**** %s: Loading dataset ****\n\n\n', subject_list{s});
-    EEG = pop_loadset('filename', [subject_list{s} '_exchn.set'], 'filepath', data_path);
+    EEG = pop_loadset('filename', [subject_list{s} '_exch.set'], 'filepath', data_path);
     trigger_info = 'Has trigger 50 and 51';
     amount_triggers = length(EEG.event);
     %% looking for people without triggers and sees if they at least have a logfile and thus if they were run with the paradigm

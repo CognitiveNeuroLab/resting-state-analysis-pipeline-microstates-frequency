@@ -88,9 +88,9 @@ This script is the first of the pre-processing scripts. It runs all the people i
 One of the issues we encountered was that some participants had their data collected using the wrong configuration file. This is taken care of.  
 The data is down-sampled from 512Hz to 256 Hz.  
 Externals are all deleted since not everyone has externals. So we cannot use them as a reference.  
-We apply a 1Hz (filter order 1690) and 50Hz (filter order 136) filter.
+We apply a 1Hz and 50Hz filter.
 We add channel info to all the channel. For this we use the following 3 files: standard-10-5-cap385, BioSemi160, BioSemi64. The first 2 are from BESA and have the correct layout. The 3rd is needed for the MoBI data. You can find these in the Functions and files folder (inside the src folder).  
-Lastly this script uses eeglab's clean_artifacts function deletes the bad channels. Channels will get deleted by the standard noise criteria, if they are flat over 5 seconds and the function checks if channels are overly correlated with each other. The function also deletes continues data if there is bad data. It breaks the data in 0.5 second steps. Data is bad if it off by 5 std dev. Which is a "A quite conservative" and default value according to the function.
+Lastly this script uses eeglab's clean_artifacts function deletes the bad channels and bad parts of data. Channels will get deleted by the standard noise criteria, if they are flat over 5 seconds and the function checks if channels are overly correlated with each other.After that it devides the data in 0.5 second epochs. In these it looks if there data has peaks that go over 20 standard deviantion of the channels amplitlude. If so these get deleted. Because it's possible that between 2 of these moments there is a very short amount of data, we make sure to delete all the continues data if between 2 boundries there is less then 2 seconds of data. 
 
 #### C_manual_check
 This script plots all the data in EEGlab as continues data and allows you to delete channels manually. 
