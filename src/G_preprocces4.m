@@ -1,11 +1,7 @@
 % Restingstate pipepline (2021)
 % Final version of SRC code 12/6/2021
 % creates separate Eyes open and Eyes closed files
-% because in the pre 12/6/2021 scripts, we decided to delete bad parts of the
-% continues data after the D_preproccess2 script (where it adds missing triggers)
-% we needed to re-add triggers.
-% The new scripts do this cleaning as a part of deleting channels and thus
-% we should not see any missing triggers. But it cannot harm to double check 
+% We double check if there are missing triggers 
 clear variables
 eeglab
 
