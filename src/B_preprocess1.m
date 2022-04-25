@@ -75,9 +75,20 @@ for g=1:length(group)
         %new way, also bad data (bursts) rejection:
         % the only thing to double check is if it will still reject eye
         % components in ICA or if these are pre-deleted now (which they shouldn't)
-        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian');
+        %EEG = pop_clean_rawdata(EEG,
+        %'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian');%doesn't delete bad periods
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',20,'WindowCriterion','off','BurstRejection','on','Distance','Euclidian'); % deletes bad chns and bad periods
+        EEG.deleteddata_wboundries=100-EEG.pnts/old_samples*100;
         new_n_chan = EEG.nbchan;
+        deleted_sample=EEG.pnts;
+        for i = length(EEG.event)-1:-1:1
+            if strcmp(EEG.event(i).type, 'boundary') && strcmp(EEG.event(i+1).type, 'boundary') && EEG.event(i+1).latency/EEG.srate-EEG.event(i).latency/EEG.srate < 2 %following event is also a boundary and less then 2 seconds of "good" data between them
+               disp(i)
+               EEG = pop_select( EEG, 'notime',[EEG.event(i).latency/EEG.srate EEG.event(i+1).latency/EEG.srate] );
+            end
+        end
         new_samples=EEG.pnts;
+        EEG.deleteddata=100-EEG.pnts/old_samples*100;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;
         deleted_data(s,:) = [string(subject_list{s}), new_samples/old_samples*100] ;
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_exchn.set'],'filepath', data_path);
