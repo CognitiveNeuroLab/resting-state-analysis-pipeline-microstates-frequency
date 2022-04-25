@@ -1,6 +1,7 @@
 % Restingstate pipepline (2021)
 % Final version of SRC code 12/6/2021
 % this script allows for re-reference (which we skip)
+% this script interpolates the bad channels
 % does an average reference
 % does ICA (using pop_runica) setting a PCA, of all chans minus 1. This is
 % not great. So it's changed to pca = rank(EEG.data), which also takes care of bridged channels)
@@ -14,12 +15,12 @@ Group = { 'Control'}; %
 for g=1:length(Group)
     switch Group{g}
         case 'Control'
-            %         home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
+                     home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
             %% aged matched controls
-            %subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
+            subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
             %% extra controls
-            subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
-            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
+            %subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
+           % home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
             % did these again because need extra channels deleted
             %         subject_list = {'12139' '10399'};
             %         home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
@@ -33,7 +34,8 @@ for g=1:length(Group)
     end
     figure_path = [home_path 'figures\'];
     participant_info = num2cell(zeros(length(subject_list),9));
-    deleted_data = num2cell(zeros(length(subject_list), 2));
+    %deleted_data = num2cell(zeros(length(subject_list), 2));
+    participant_data_qt = string(zeros(length(subject_list), 4)); %prealocationg space for speed
     components = num2cell(zeros(length(subject_list), 8)); %prealocationg space for speed
     refchan = { }; %if you want to re-ref to a channel add the name of the channel here, if empty won't re-ref to any specific channel
     for s=1:length(subject_list)
@@ -42,7 +44,20 @@ for g=1:length(Group)
         data_path  = [home_path subject_list{s} '\\'];
         fprintf('\n\n\n**** %s: Loading dataset ****\n\n\n', subject_list{s});
         EEG = pop_loadset('filename', [subject_list{s} '_triggerfix.set'], 'filepath', data_path);
-        %re-referencing, if refchan is empty this get's skipped
+        %% setting PCA for ICA (amount of ICs you want to be created)
+        pca = EEG.nbchan-1; %the PCA part of the ICA needs stops the rank-deficiency % pre 12/6/2021 , is not accurate but so far the best we can do. Does not take bridging in account, but neither would the normal ICA function, which misses the avg ref sometimes
+        %% interpolation
+        EEGinter = pop_loadset('filename', [subject_list{s} '_info.set'], 'filepath', data_path);%loading participant file with 64 channels
+        %saving the original amount of total channels
+        labels_all = {EEGinter.chanlocs.labels}.'; %stores all the labels in a new matrix
+        %interpolating for 64 channels
+        labels_good = {EEG.chanlocs.labels}.'; %saves all the channels that are in the excom file
+        disp(EEG.nbchan); %writes down how many channels are there
+        EEG = pop_interp(EEG, EEGinter.chanlocs, 'spherical');%interpolates the data
+        EEG = eeg_checkset( EEG );
+        EEG = pop_saveset( EEG, 'filename', [subject_list{s} '_inter.set'], 'filepath', data_path); %saves data
+        disp(EEG.nbchan)
+        %% re-referencing, if refchan is empty this get's skipped
         if isempty(refchan)~=1 %if no re-reference channels chose this gets skipped
             for j=1:length(EEG.chanlocs)
                 if strcmp(refchan{1}, EEG.chanlocs(j).labels)
@@ -60,8 +75,9 @@ for g=1:length(Group)
                 EEG = pop_reref( EEG, [ref1 ref2]); %re-references to the average of 2 channels
             end
         end
-        EEG = eeg_checkset( EEG );
-        %another re-ref to the averages as suggested for the ICA
+        
+        
+        %% Avg re-reference as suggested for the ICA
         EEG = pop_reref( EEG, []);
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ref.set'],'filepath', data_path);
@@ -75,7 +91,7 @@ for g=1:length(Group)
         end
         %Independent Component Analysis
         EEG = eeg_checkset( EEG );
-        pca = EEG.nbchan-1; %the PCA part of the ICA needs stops the rank-deficiency % pre 12/6/2021 , is not accurate but so far the best we can do. Does not take bridging in account, but neither would the normal ICA function, which misses the avg ref sometimes
+        
         EEG = pop_runica(EEG, 'extended',1,'interupt','on','pca',pca); %using runica function, with the PCA part
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ica.set'],'filepath', data_path);
@@ -135,16 +151,16 @@ for g=1:length(Group)
         delete([figure_path subject_list{s} '_remaining_ICs_topos.png'])
         close all
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_excom.set'],'filepath', data_path);%save
-        %% extra cleaning %was uses before 12/6/2021 for all projects, not needed after update to cleaning function
-        %orig_length=EEG.xmax;
-        %EEG = pop_rejcont(EEG, 'elecrange',[1:EEG.nbchan] ,'freqlimit',[20 40] ,'threshold',8 ,'epochlength',0.5,'contiguous',4,'addlength',0.25,'taper','hamming');
-        %clean_length=EEG.xmax;
-        %EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_clean.set'],'filepath', data_path);%save
         %% saving structures
-        deleted_data(s,:)=[subject_list(s), 100-(clean_length/orig_length)*100];
         subj_comps=[subject_list(s), num2cell(brain_ic), num2cell(muscle_ic), num2cell(eye_ic), num2cell(hearth_ic), num2cell(line_noise_ic), num2cell(channel_ic), num2cell(other_ic)];
-        components(s,:)=[subj_comps];
+        lables_del                 = setdiff(labels_all,labels_good); %only stores the deleted channels
+        All_bad_chan               = strjoin(lables_del); %puts them in one string rather than individual strings
+        ID                         = string(subject_list{s});%keeps all the IDs
+        data_subj                  = [ID, length(lables_del), All_bad_chan, EEG.nbchan]; %combines IDs and Bad channels, total channels at the end
+        participant_data_qt(s,:)   = data_subj;%combine new data with old data
+        components(s,:)            =[subj_comps];
+        clear EEG_temp EEGinter
     end
     save([home_path 'components_' Group{g} ], 'components');
-    save([home_path 'deleted_data_' Group{g}], 'deleted_data');
+    save([home_path 'deleted_data_' Group{g}], 'participant_data_qt');
 end
