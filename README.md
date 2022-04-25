@@ -100,6 +100,9 @@ This script will double check and fix any potential trigger issue we encountered
 Since off the 12/6/2021 update this is not the case. The clean_artifacts takes care of noisy continues data. But it might be good to run either script since they are quick. If you want to save time, skip this one.
 
 #### E_preprocces3
+This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding subject's data. In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
+We chose to interpolate before the ICA because like this we can still use the ICA weights for all the channels, and since we are setting a PCA (amount of ICs we want the ICA funtion to create) we account for the interpolated channels not being used for this. 
+
 This script will do an average reference.  
 This is followed by an [Independent Component Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html). We use the pca option to prevent rank-deficiencies.
 After his we delete only eye components by using [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the component if it has more than 80% eye data and less then 10% brain data. We arrived at this criteria after comparing (for a different dataset) how many components we (Ana, Douwe and Filip) would delete manually and what threshold would get the closest to that.
@@ -107,12 +110,9 @@ After that we use [pop_rejcont](https://github.com/wojzaremba/active-delays/blob
 
 **note** for the Aging group, we use the [pop_rejcont](https://github.com/wojzaremba/active-delays/blob/master/external_tools/eeglab11_0_4_3b/functions/popfunc/pop_rejcont.m) function also right before the ICA. This is because the data was too noisy for more than 50% of the participants to find eye components. 
 
-#### F_preprocces4
-This script loads a file with all the original channels, deletes the externals and uses these file locations to interpolate the channels of the corresponding subject's data.  
-In the case of 160 channel data, it uses the [transform_n_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab) function to interpolate the remaining channels not to the original 160, but to 64 channel data so that it is the same as all the other data. For this to work Matlab needs to know the location of 2 things, the trannsform_n_channel.m file and the EEG files called 64.set and 64.fdt.
 
-#### G_preprocces5
-In this script, we first make sure that the triggers are still in the right place. Due to the extra cleaning we did with the pop_rejcont function in [E_preprocces3](#e_preprocces3) it is possible that the triggers got deleted if the corresponding continues data were too noisy. If they got deleted, the scripts calculates what the time of the onset of that deleted part of data was and uses that instead as the latency of the trigger.
+#### G_preprocces4
+In this script, we first make sure that the triggers are still in the right place. It is possible that the triggers got deleted if the corresponding continues data were too noisy. If they got deleted, the scripts calculates what the time of the onset of that deleted part of data was and uses that instead as the latency of the trigger. This should already be fixed before, but this is a double check.
 
 ### Power Frequency Analysis
  
