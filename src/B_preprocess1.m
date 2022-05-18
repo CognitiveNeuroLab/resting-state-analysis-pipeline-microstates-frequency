@@ -90,6 +90,7 @@ for g=1:length(group)
                 EEG.event(i).time=EEG.event(i).latency/EEG.srate
             end
             EEG.event(length(EEG.event)+1)=EEG.event(length(EEG.event)); EEG.event(length(EEG.event)).type='temp';% EEG.event(length(EEG.event)).latency=EEG.event(length(EEG.event)).latency+100;EEG.event(length(EEG.event)).duration=EEG.event(length(EEG.event)).duration+100;
+            
             for i = length(EEG.event)-1:-1:1%12139 caused issue
                 if strcmp(EEG.event(i).type, 'boundary') && strcmp(EEG.event(i+1).type, 'boundary') && EEG.event(i+1).latency/EEG.srate-EEG.event(i).latency/EEG.srate < 2 %following event is also a boundary and less then 2 seconds of "good" data between them
                     disp(i)

@@ -23,13 +23,17 @@ for s=1:length(subject_list)
         logloc = dir([data_path '*.log']);
         if isempty(logloc)
             trigger_info = 'No triggers and no logfiles';
-            clear logloc
         else
             trigger_info = 'No triggers but has logfile';
             clear logloc
         end
         %based on the raw data we decided that for these people we could place the triggers in the same place
-        
+        if strcmp(subject_list{s},'placeholder')
+            EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        end
+        if strcmp(subject_list{s},'7094')
+            EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_early.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        end
         
         
         %% looking and replacing wrong tiggers due to USB error
@@ -81,17 +85,28 @@ for s=1:length(subject_list)
         end
     end
     
-    %% doing the final test to make sure everyone has trigger 50 and 51 (ignoring boundary)
+    %doing the final test to make sure everyone has trigger 50 and 51 (ignoring boundary)
     final_triggers={EEG.event.type};
     for i=length(final_triggers):-1:1
         if strcmp(final_triggers(1,i),'boundary')
             final_triggers(i)=[];
         end
     end
-    %we manually checked these people and they have a onset of alpha based on that they have specific onsets for the triggers. Later we will delete at least the first 10sec of data, this gives us a range, so mulitple people can use the same trigger time
-    if strcmp(subject_list{s},'7094')
-        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_early.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);    
-    elseif strcmp(subject_list{s}, '2204') || strcmp(subject_list{s}, '2207') || strcmp(subject_list{s}, '2231') || strcmp(subject_list{s}, '10748')
+    %we manually checked these people and they have a onset of alpha
+    % 7059 - very clearly at 186.5 - dont use this one (too few data)
+    % 12512- at 227
+    % 12215- maybe at 232 - dont use
+    % 12272- 236
+    % 2229 - 264,
+    % 12755- not sure maybe at 246 - dont use
+    % 2281 -282
+    % 7092 -clear at 291 -
+    % 2270 - maybe at 312 boundry? - dont use
+    %7075 -no idication , also no events in previous files...    - dont use
+    %12413- no idea  - dont use
+    % alpha at 306 '2204'  2207 at 296 2231 at 302 - 10748 clear at 304 -
+    % everyone that has between 295 and 305 %since we'll cut the first 10 sec we have a range
+    if strcmp(subject_list{s}, '2204') || strcmp(subject_list{s}, '2207') || strcmp(subject_list{s}, '2231') || strcmp(subject_list{s}, '10748')
         EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
         final_triggers= {'added 50', 'added 51'};
     elseif strcmp(subject_list{s}, '12512') || strcmp(subject_list{s}, '12272')
@@ -103,11 +118,21 @@ for s=1:length(subject_list)
     elseif strcmp(subject_list{s}, '2281') || strcmp(subject_list{s}, '7092')
         EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_282.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
         final_triggers= {'added 50', 'added 51'};
-    % from here on out we should see nobody in the end with errors if so, either find out where the triggers should go, if not sure, don't use data
     elseif length(final_triggers) > 2
         final_triggers= {'error too ', 'many triggers'};
     elseif length(final_triggers) < 1
         final_triggers= {'error ', 'no triggers'};
+%         logloc = dir([data_path '*.log']);
+%         if isempty(logloc)
+%             %No triggers and no logfiles
+%             final_triggers= {'nothing', 'nothing'}
+%             clear logloc
+%         else
+%             final_triggers= {'nothing', 'nothing'};%No triggers but has logfile
+%             % EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+%             % final_triggers= {'added 50', 'added 51'};%No triggers but has logfile
+%             clear logloc
+%         end
     elseif strcmp(final_triggers(1),'condition 50') &&  length(final_triggers)==1
         final_triggers= {'has 50', 'missing 51'};
         if strcmp(subject_list{s}, '12177')
@@ -127,6 +152,3 @@ for s=1:length(subject_list)
 end
 save([home_path 'participant_info'], 'participant_info');
 
-%changed how it checks for bad triggers. Before it not delete all
-%boundaries only last one, now all and will see if there is anything but
-%condtion 51 and condtion 50

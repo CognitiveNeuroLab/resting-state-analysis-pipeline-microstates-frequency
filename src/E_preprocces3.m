@@ -140,5 +140,5 @@ home_path  = 'D:\restingstate\data\';
         components(s,:)            =[subj_comps];
         clear EEG_temp EEGinter
     end
-    save([home_path 'components' ], 'components');
+   save([home_path 'components' ], 'components');
     save([home_path 'deleted_data'], 'participant_data_qt');

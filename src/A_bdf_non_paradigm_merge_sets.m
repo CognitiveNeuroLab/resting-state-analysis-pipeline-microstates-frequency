@@ -5,10 +5,10 @@
 % of a black screen)
 % ------------------------------------------------
 clear variables
-subject_list = {'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956' '10399' '12002' '12122'};
+subject_list = {'2260' '2201'};
 %subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912'};
 filename     = 'restingstate'; % if your bdf file has a name besides the ID of the participant (e.g. oddball_paradigm)
-home_path    = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\'; %place data is (something like 'C:\data\')
+home_path    = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\'; %place data is (something like 'C:\data\')
 wrongconfig = zeros(1,length(subject_list)); %there are 160channel files that have a wrong config file, this is to save them
 for s = 1:length(subject_list)
     clear ALLEEG
@@ -59,7 +59,8 @@ for s = 1:length(subject_list)
         EEG     = eeg_checkset(EEG);
     end
     %save the bdf as a .set file
-    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '.set'],'filepath',data_path);
+    mkdir( ['D:\restingstate\data\' subject_list{s}])
+    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '.set'],'filepath',['D:\restingstate\data\' subject_list{s}]);
 end
 save([home_path 'participants_with_wrong_config'], 'wrongconfig');
 
