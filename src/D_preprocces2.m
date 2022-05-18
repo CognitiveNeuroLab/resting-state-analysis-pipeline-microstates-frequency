@@ -6,32 +6,17 @@
 
 clear variables
 eeglab
-Group = 'Control'; % 'Control'  'ASD' 'Aging'
+%don't include: '7049' '7059' too few remaining data - '12215' '12755' '2270' '7075' '12413' not clear where
+%triggers used to be
+subject_list = {'2201' '2202' '2204' '2207' '2212' '2216' '2222' '2229' '2231' '2243' '2256' '2257' '2260' '2261' '2267'  '2274' '2281' '2284' '2286' '2292' '2295' '7003' '7007' '7019' '7025' '7046' '7051' '7054' '7058'  '7061' '7064' '7065' '7073'  '7078' '7089' '7092' '7094' '7123' '7556' '7808' '10293' '10561' '10562' '10581' '10616' '10748' '10822' '10858' '10935' '12004' '12010' '12139' '12177' '12188' '12197' '12203' '12206'  '12272'  '12415' '12449' '12482' '12512' '12588' '12632' '12648' '12651' '12707' '12727' '12739' '12746' '12750'  '12770' '12815' '12852' '12870'};
 
-switch Group
-    case 'Control'
-        %% aged matched controls
-        %subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394'
-        home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';'10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
-        %% extra controls
-        subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
-        
-        participant_info = num2cell(zeros(length(subject_list),9));
-    case 'ASD'
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
-        subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
-        participant_info = num2cell(zeros(length(subject_list),9));
-    case 'Aging'
-        home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Aging\';
-        subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
-        participant_info = num2cell(zeros(length(subject_list),9));
-end
+home_path  = 'D:\restingstate\data\';
+participant_info = num2cell(zeros(length(subject_list),9));
 for s=1:length(subject_list)
     data_path  = [home_path subject_list{s} '\'];
     fprintf('\n\n\n**** %s: Loading dataset ****\n\n\n', subject_list{s});
-    EEG = pop_loadset('filename', [subject_list{s} '_exch.set'], 'filepath', data_path);
-    trigger_info = 'Has trigger 50 and 51';
+    EEG = pop_loadset('filename', [subject_list{s} '_exchn.set'], 'filepath', data_path);
+    trigger_info = 'start of analysis';
     amount_triggers = length(EEG.event);
     %% looking for people without triggers and sees if they at least have a logfile and thus if they were run with the paradigm
     if isempty(EEG.event)
@@ -43,10 +28,10 @@ for s=1:length(subject_list)
             clear logloc
         end
         %based on the raw data we decided that for these people we could place the triggers in the same place
-        if strcmp(subject_list{s},'12272') || strcmp(subject_list{s},'12755') || strcmp(subject_list{s},'10748') || strcmp(subject_list{s},'10929')|| strcmp(subject_list{s},'12215')|| strcmp(subject_list{s},'12413') || strcmp(subject_list{s},'11515')
+        if strcmp(subject_list{s},'placeholder')
             EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
         end
-        if strcmp(subject_list{s},'10385')
+        if strcmp(subject_list{s},'7094')
             EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_early.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
         end
         
@@ -60,6 +45,9 @@ for s=1:length(subject_list)
         %% only adding first trigger (started saving too late so missed the first trigger)
     elseif strcmp(subject_list{s},'1838')
         EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_first.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        trigger_info = 'Missed 50, saving started too late';
+    else %% all the rest that seem to have triggers
+        trigger_info = 'has events';
     end
     
     
@@ -96,21 +84,71 @@ for s=1:length(subject_list)
             disp('used it 160')
         end
     end
-    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_triggerfix.set'],'filepath', data_path);%save
+    
     %doing the final test to make sure everyone has trigger 50 and 51 (ignoring boundary)
     final_triggers={EEG.event.type};
-    ii=[];
-    for i=1:length(final_triggers)
+    for i=length(final_triggers):-1:1
         if strcmp(final_triggers(1,i),'boundary')
-            ii=i;
+            final_triggers(i)=[];
         end
     end
-    final_triggers(ii)=[];
-    if length(final_triggers) > 2
+    %we manually checked these people and they have a onset of alpha
+    % 7059 - very clearly at 186.5 - dont use this one (too few data)
+    % 12512- at 227
+    % 12215- maybe at 232 - dont use
+    % 12272- 236
+    % 2229 - 264,
+    % 12755- not sure maybe at 246 - dont use
+    % 2281 -282
+    % 7092 -clear at 291 -
+    % 2270 - maybe at 312 boundry? - dont use
+    %7075 -no idication , also no events in previous files...    - dont use
+    %12413- no idea  - dont use
+    % alpha at 306 '2204'  2207 at 296 2231 at 302 - 10748 clear at 304 -
+    % everyone that has between 295 and 305 %since we'll cut the first 10 sec we have a range
+    if strcmp(subject_list{s}, '2204') || strcmp(subject_list{s}, '2207') || strcmp(subject_list{s}, '2231') || strcmp(subject_list{s}, '10748')
+        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        final_triggers= {'added 50', 'added 51'};
+    elseif strcmp(subject_list{s}, '12512') || strcmp(subject_list{s}, '12272')
+        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_227.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        final_triggers= {'added 50', 'added 51'};
+    elseif strcmp(subject_list{s}, '2229')
+        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_264.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        final_triggers= {'added 50', 'added 51'};
+    elseif strcmp(subject_list{s}, '2281') || strcmp(subject_list{s}, '7092')
+        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_282.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        final_triggers= {'added 50', 'added 51'};
+    elseif length(final_triggers) > 2
         final_triggers= {'error too ', 'many triggers'};
     elseif length(final_triggers) < 1
-        final_triggers= {'error too ', 'few triggers'};
+        final_triggers= {'error ', 'no triggers'};
+%         logloc = dir([data_path '*.log']);
+%         if isempty(logloc)
+%             %No triggers and no logfiles
+%             final_triggers= {'nothing', 'nothing'}
+%             clear logloc
+%         else
+%             final_triggers= {'nothing', 'nothing'};%No triggers but has logfile
+%             % EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+%             % final_triggers= {'added 50', 'added 51'};%No triggers but has logfile
+%             clear logloc
+%         end
+    elseif strcmp(final_triggers(1),'condition 50') &&  length(final_triggers)==1
+        final_triggers= {'has 50', 'missing 51'};
+        if strcmp(subject_list{s}, '12177')
+            EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_last.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+            final_triggers= {'has 50', 'added missing 51'};
+        end
+    elseif strcmp(final_triggers(1),'condition 51') &&  length(final_triggers)==1
+        EEG = pop_importevent( EEG, 'event',[home_path 'trigger_info_first.txt'],'fields',{'latency' 'type' 'position'},'skipline',1,'timeunit',1);
+        final_triggers= {'added  50,', 'has 51'};
+    elseif (strcmp(final_triggers(1),'condition 50') &&  strcmp(final_triggers(2),'condition 51')) || (strcmp(final_triggers{1},'50') &&  strcmp(final_triggers{2},'51'))
+        final_triggers= {'has 50', 'has 51'};
+    elseif final_triggers{1}==50 && final_triggers{2}==51
+        final_triggers= {'has 50', 'has 51'};
     end
+    EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_triggerfix.set'],'filepath', data_path);%save
     participant_info(s,:)= [subject_list(s), trigger_info, trigger_225, length(EEG.etc.clean_channel_mask), EEG.nbchan, 100-(EEG.nbchan/length(EEG.etc.clean_channel_mask)*100), EEG.xmax,final_triggers];
 end
-save([home_path 'participant_info_' Group], 'participant_info');
+save([home_path 'participant_info'], 'participant_info');
+

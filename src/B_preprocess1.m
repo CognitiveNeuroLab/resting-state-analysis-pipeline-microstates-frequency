@@ -9,20 +9,21 @@
 % ------------------------------------------------
 clear variables
 eeglab
-group = {'Control' '22q' 'schiz'};%
+group = { 'Control' '22q' 'schiz'};%
 lowpass_filter_hz=50; %50hz filter
 highpass_filter_hz=1; %1hz filter
-script_location= 'C:\Users\dohorsth\Documents\GitHub\resting-state-analysis-pipeline-microstates-frequency\src\';
+script_location= 'D:\restingstate\scripts\';
+
 for g=1:length(group)
     if strcmp(group{g},'22q')
-        subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1108' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11369' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants
-        home_path  = 'D:\Data\';
+        subject_list = {'2201' '2202' '2204' '2207' '2212' '2216' '2222' '2229' '2231' '2243' '2256' '2257' '2260' '2261' '2267' '2270' '2274' '2281' '2284' '2286' '2292' '2295'};
+        home_path  = 'D:\restingstate\data\';
     elseif strcmp(group{g},'schiz')
-        subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
-        home_path  = 'D:\Data\';
+        subject_list = {'7003' '7007' '7019' '7025' '7046' '7049' '7051' '7054' '7058' '7059' '7061' '7064' '7065' '7073' '7075' '7078' '7089' '7092' '7094' '7123' '7556' '7808'};
+        home_path  = 'D:\restingstate\data\';
     elseif strcmp(group{g},'Control')
-        subject_list = {'10281'};%'10158' '10165' '10384' '10407' '10451' '10467' '10501' '10534' '10615' '10620' '10639' '10844' '10956' '10033' '10130' '10131' '10257' '10281' '10293' '10360' '10369' '10394' '10438' '10446' '10463' '10476' '10526' '10545' '10561' '10562' '10581' '10585' '10616' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935' '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
-        home_path  = 'C:\Users\dohorsth\Desktop\practice\';%'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
+        subject_list = {'10293' '10561' '10562' '10581' '10616' '10748' '10822' '10858' '10935' '12004' '12010' '12139' '12177' '12188' '12197' '12203' '12206' '12215' '12272' '12413' '12415' '12449' '12482' '12512' '12588' '12632' '12648' '12651' '12707' '12727' '12739' '12746' '12750' '12755' '12770' '12815' '12852' '12870'};
+        home_path  = 'D:\restingstate\data\';
     end
     deleted_channels=zeros(length(subject_list),2);
     deleted_data=zeros(length(subject_list),2);
@@ -77,16 +78,31 @@ for g=1:length(group)
         % components in ICA or if these are pre-deleted now (which they shouldn't)
         %EEG = pop_clean_rawdata(EEG,
         %'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian');%doesn't delete bad periods
-        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',20,'WindowCriterion','off','BurstRejection','on','Distance','Euclidian'); % deletes bad chns and bad periods
+        %first at 'BurstCriterion',20, this caused too much data to be
+        %deleted, second time at 'BurstCriterion',50, this caused too few data to be
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion',5,'ChannelCriterion',0.8,'LineNoiseCriterion',4,'Highpass','off','BurstCriterion',35,'WindowCriterion','off','BurstRejection','on','Distance','Euclidian'); % deletes bad chns and bad periods
         EEG.deleteddata_wboundries=100-EEG.pnts/old_samples*100;
         new_n_chan = EEG.nbchan;
         deleted_sample=EEG.pnts;
-        for i = length(EEG.event)-1:-1:1
-            if strcmp(EEG.event(i).type, 'boundary') && strcmp(EEG.event(i+1).type, 'boundary') && EEG.event(i+1).latency/EEG.srate-EEG.event(i).latency/EEG.srate < 2 %following event is also a boundary and less then 2 seconds of "good" data between them
-               disp(i)
-               EEG = pop_select( EEG, 'notime',[EEG.event(i).latency/EEG.srate EEG.event(i+1).latency/EEG.srate] );
+        if ~isempty(EEG.event) %at least 1 participant with no events
+            %adding one boundary at the end to stop issues, will delete later
+            for i=1:length(EEG.event)
+                EEG.event(i).time=EEG.event(i).latency/EEG.srate
             end
+            EEG.event(length(EEG.event)+1)=EEG.event(length(EEG.event)); EEG.event(length(EEG.event)).type='temp';% EEG.event(length(EEG.event)).latency=EEG.event(length(EEG.event)).latency+100;EEG.event(length(EEG.event)).duration=EEG.event(length(EEG.event)).duration+100;
+            
+            for i = length(EEG.event)-1:-1:1%12139 caused issue
+                if strcmp(EEG.event(i).type, 'boundary') && strcmp(EEG.event(i+1).type, 'boundary') && EEG.event(i+1).latency/EEG.srate-EEG.event(i).latency/EEG.srate < 2 %following event is also a boundary and less then 2 seconds of "good" data between them
+                    disp(i)
+                    EEG = pop_select( EEG, 'notime',[EEG.event(i).latency/EEG.srate EEG.event(i+1).latency/EEG.srate] );
+                    if strcmp(EEG.event(length(EEG.event)).type, 'boundary')
+                        EEG.event(length(EEG.event)+1)=EEG.event(length(EEG.event)); EEG.event(length(EEG.event)).type='temp';
+                    end
+                end
+            end
+            EEG.event(length(EEG.event)) = [];
         end
+        % deleting the event we added before
         new_samples=EEG.pnts;
         EEG.deleteddata=100-EEG.pnts/old_samples*100;
         deleted_channels(s,:) = [string(subject_list{s}), old_n_chan-new_n_chan] ;

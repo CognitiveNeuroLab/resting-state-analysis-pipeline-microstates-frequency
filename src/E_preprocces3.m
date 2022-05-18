@@ -10,29 +10,12 @@
 
 clear variables
 eeglab
-Group = { 'Control'}; %
+subject_list = {'2201' '2202' '2204' '2207' '2212' '2216' '2222' '2229' '2231' '2243' '2256' '2257' '2260' '2261' '2267'  '2274' '2281' '2284' '2286' '2292' '2295' '7003' '7007' '7019' '7025' '7046' '7051' '7054' '7058'  '7061' '7064' '7065' '7073'  '7078' '7089' '7092' '7094' '7123' '7556' '7808' '10293' '10561' '10562' '10581' '10616' '10748' '10822' '10858' '10935' '12004' '12010' '12139' '12177' '12188' '12197' '12203' '12206'  '12272'  '12415' '12449' '12482' '12512' '12588' '12632' '12648' '12651' '12707' '12727' '12739' '12746' '12750'  '12770' '12815' '12852' '12870'};
 
-for g=1:length(Group)
-    switch Group{g}
-        case 'Control'
-                     home_path  = '\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\Control\';
-            %% aged matched controls
-            subject_list = {'10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' '12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899'};% ------------------------------------------------
-            %% extra controls
-            %subject_list = {'10297' '10331' '10385' '10399' '10497' '10553' '10590' '10640' '10867' '10906' '12002' '12004' '12006' '12122' '12139' '12177' '12188' '12197' '12203' '12206' '12230' '12272' '12415' '12474' '12482' '12516' '12534' '12549' '12588' '12632' '12735' '12746' '12755' '12770' '12852' '12870'};
-           % home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
-            % did these again because need extra channels deleted
-            %         subject_list = {'12139' '10399'};
-            %         home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Remaining_controls\';
-        case 'ASD'
-            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\ASD\';
-            subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'}; %all the IDs for the indivual particpants;
-        case 'Aging'
-            home_path  = 'C:\Users\dohorsth\Desktop\Testing restingstate\Aging\';
-            subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
-            deleted_data_before = num2cell(zeros(length(subject_list), 2)); %only this group wil have their data cleaned extra
-    end
-    figure_path = [home_path 'figures\'];
+home_path  = 'D:\restingstate\data\';
+
+
+    figure_path = ['D:\restingstate\figures\'];
     participant_info = num2cell(zeros(length(subject_list),9));
     %deleted_data = num2cell(zeros(length(subject_list), 2));
     participant_data_qt = string(zeros(length(subject_list), 4)); %prealocationg space for speed
@@ -82,13 +65,6 @@ for g=1:length(Group)
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ref.set'],'filepath', data_path);
         
-        %because the ICA data + overall data is short seem noisy we clean extra for this group
-        if strcmp(Group{g}, 'Aging')
-            orig_length=EEG.xmax;
-            EEG = pop_rejcont(EEG, 'elecrange',[1:EEG.nbchan] ,'freqlimit',[20 40] ,'threshold',8 ,'epochlength',0.5,'contiguous',4,'addlength',0.25,'taper','hamming');
-            clean_length=EEG.xmax;
-            deleted_data_before(s,:)=[subject_list(s), 100-(clean_length/orig_length)*100];
-        end
         %Independent Component Analysis
         EEG = eeg_checkset( EEG );
         
@@ -96,12 +72,15 @@ for g=1:length(Group)
         EEG = eeg_checkset( EEG );
         EEG = pop_saveset( EEG, 'filename',[subject_list{s} '_ica.set'],'filepath', data_path);
         %organizing components
+        EEG = pop_loadset('filename', [subject_list{s} '_ica.set'], 'filepath', data_path);
         clear bad_components brain_ic muscle_ic eye_ic hearth_ic line_noise_ic channel_ic other_ic
         EEG = iclabel(EEG); %does ICLable function
         ICA_components = EEG.etc.ic_classification.ICLabel.classifications ; %creates a new matrix with ICA components
         %Only the eyecomponent will be deleted, thus only components 3 will be put into the 8 component
         ICA_components(:,8) = ICA_components(:,3); %row 1 = Brain row 2 = muscle row 3= eye row 4 = Heart Row 5 = Line Noise row 6 = channel noise row 7 = other, combining this makes sure that the component also gets deleted if its a combination of all.
-        bad_components = find(ICA_components(:,8)>0.80 & ICA_components(:,1)<0.10); %if the new row is over 80% of the component and the component has less the 5% brain
+        %bad_components = (find(ICA_components(:,3)>0.70 & ICA_components(:,1)<0.10) || (ICA_components(:,2)>0.80 & ICA_components(:,1)<0.10) || (ICA_components(:,6)>0.70 & ICA_components(:,1)<0.10)); %if the new row is over 80% of the component and the component has less the 5% brain
+        bad_components = (find((ICA_components(:,3)>0.70 | ICA_components(:,2)>0.80 | ICA_components(:,6)>0.70) & ICA_components(:,1)<0.10)); %if the new row is over 80% of the component and the component has less the 5% brain
+          
         %Still labeling all the other components so they get saved in the end
         brain_ic = length(find(ICA_components(:,1)>0.80));
         muscle_ic = length(find(ICA_components(:,2)>0.80 & ICA_components(:,1)<0.05));
@@ -161,6 +140,5 @@ for g=1:length(Group)
         components(s,:)            =[subj_comps];
         clear EEG_temp EEGinter
     end
-    save([home_path 'components_' Group{g} ], 'components');
-    save([home_path 'deleted_data_' Group{g}], 'participant_data_qt');
-end
+   save([home_path 'components' ], 'components');
+    save([home_path 'deleted_data'], 'participant_data_qt');

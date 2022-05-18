@@ -5,7 +5,8 @@
 % does a log transform and saves all participant results
 % script is writen by Filip and edited by Douwe
 %to do
-%-  double check if NFFT should be 256 or 512
+%-  double check if NFFT should be 256 or 512 (nonequispaced fast Fourier
+%transform?)
 %-  double check if logtransform is only for PSD or also when only doing power
 
 clear variables
@@ -18,8 +19,10 @@ Fs   = 256; % sampling rate, amount of samples per unit time
 NFFT = 256;  %Number of DFT points, specified as a positive integer. For a real-valued input signal, x, the PSD estimate, pxx has length (nfft/2 + 1) if nfft is even, and (nfft + 1)/2 if nfft is odd. For a complex-valued input signal,x, the PSD estimate always has length nfft. If nfft is specified as empty, the default nfft is used. If nfft is greater than the segment length, the data is zero-padded. If nfft is less than the segment length, the segment is wrapped using datawrap to make the length equal to nfft.
 SPECTRUMTYPE = 'power'; %Use the 'power' option to obtain an estimate of the power at each frequency. 'psd', returns the power spectral density
 %% what channel to save
-channel=48;% see EEG_EC.chanlocs for the number for all channels and names
-ch_name='Cz';% CPz = 32; Pz  = 31; Cz  = 48;
+channel=64;% see EEG_EC.chanlocs for the number for all channels and names % CPz = 32; Pz  = 31; Cz  = 48;
+ch_name= 'all'; %'Fpz' 'Fp2' 'AF7' 'AF3' 'AFz' 'AF4' 'AF8' 'F7' 'F5' 'F3' 'F1' 'Fz' 'F2' 'F4' 'F6' 'F8' 'FT7' 'FC5' 'FC3' 'FC1' 'FCz' 'FC2' 'FC4' 'FC6' 'FT8' 'T7' 'C5' 'C3' 'C1' 'Cz' 'C2' 'C4' 'C6' 'T8' 'TP7' 'CP5' 'CP3' 'CP1' 'CPz' 'CP2' 'CP4' 'CP6' 'TP8' 'P9' 'P7' 'P5' 'P3' 'P1' 'Pz' 'P2' 'P4' 'P6' 'P8' 'P10' 'PO7' 'PO3' 'POz' 'PO4' 'PO8' 'O1' 'Oz' 'O2' 'Iz' 
+%done: 
+%ch_name='Fp1';
 %% How to save the final table
 file_type='excel';%saves the final table as either 'excel' or 'matlab'
 if strcmp(file_type,'matlab')
@@ -32,25 +35,28 @@ else
     how_to_save='table';
 end
 %% what group to run
-group= {'Aging' };%'Control' 'ASD'};
+group= {'22q' 'Control' 'sz'};  %'Control' 'schiz' 
 
 for group_count = 1:length(group)
-    if strcmp(group{group_count},'Aging')
-        subject_list = {'12022' '12023' '12031' '12081' '12094' '12188' '12255' '12335' '12339' '12362' '12364' '12372' '12376' '12390' '12398' '12407' '12408' '12451' '12454' '12457' '12458' '12459' '12468' '12478' '12498' '12510' '12517' '12532' '12564' '12631' '12633' '12634' '12636' '12665' '12670' '12696' '12719' '12724' '12751' '12763' '12769' '12776' '12790' '12806' '12814' '12823' '12830' '12847' '12851' '12855' '12856' '12857' '12859' '12871' '12872' '12892'};
-    elseif strcmp(group{group_count},'ASD')
-        subject_list = {'1101' '1164' '1808' '1852' '1855' '11014' '11094' '11151' '11170' '11275' '11349' '11516' '11558' '11583' '11647' '11729' '11735' '11768' '11783' '11820' '11912' '1106' '1132' '1134' '1154' '1160' '1173' '1174' '1179' '1190' '1838' '1839' '1874' '11013' '11056' '11098' '11106' '11198' '11244' '11293' '11325' '11354' '11375' '11515' '11560' '11580' '11667' '11721' '11723' '11750' '11852' '11896' '11898' '11913' '11927' '11958' '11965'};
-    elseif strcmp(group{group_count},'Control')
-        subject_list = {'12512' '12648' '12651' '12707' '12727' '12739' '12750' '12815' '12898' '12899' '10033' '10130' '10131' '10158' '10165' '10257' '10281' '10293' '10360' '10369' '10384' '10394' '10407'  '10438' '10446' '10451' '10463' '10467' '10476' '10501' '10526' '10534' '10545' '10561' '10562' '10581' '10585' '10616' '10615' '10620' '10639' '10748' '10780' '10784' '10822' '10858' '10906' '10915' '10929' '10935'  '10844' '10956'  '12005' '12007' '12010' '12215' '12328' '12360' '12413' };
-    end
-    save_path = ['\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\' group{group_count} '\'];
-    load_path = ['\\data.einsteinmed.org\users\Filip Ana Douwe\Resting state data\' group{group_count} '\'];
+switch group{group_count}
+    case 'Control' %excluding '10534' deleted too much data
+        subject_list = {'10293' '10561' '10562' '10581' '10616' '10748' '10822' '10858' '10935' '12004' '12010' '12139' '12177' '12188' '12197' '12203' '12206'  '12272'  '12415' '12482' '12512' '12588' '12632' '12648' '12651' '12727' '12739' '12746' '12750'  '12770' '12815' '12852' '12870'};
+    case 'sz' 
+           subject_list = {'7003' '7007' '7019' '7025' '7046' '7051' '7054' '7058'  '7061' '7064' '7065' '7073'  '7078' '7089' '7092' '7094' '7123' '7556' '7808'};
+    case '22q' 
+        subject_list = {'2201' '2202' '2204' '2207' '2212' '2216' '2222' '2229' '2231' '2243' '2256' '2257' '2260' '2261' '2267'  '2274' '2281' '2284' '2286' '2292' '2295'};
+end
+home_path = 'D:\restingstate\data\';
+    save_path = 'D:\restingstate\data\';
+
     if strcmp(how_to_save,'table')
-        Power_EO_CH1_LOG=zeros(129*length(subject_list),1); ID=zeros(129*length(subject_list),1); freq=zeros(129*length(subject_list),1); Power_EO_CH1=zeros(129*length(subject_list),1); Power_EC_CH1=zeros(129*length(subject_list),1);
+    %    ID=zeros(64*129*length(subject_list),1); freq=zeros(64*129*length(subject_list),1); Power_EO_CH1=zeros(64*129*length(subject_list),1); Power_EC_CH1=zeros(64*129*length(subject_list),1);  Power_EO_CH1_LOG=zeros(64*129*length(subject_list),1);  Power_EC_CH1_LOG=zeros(64*129*length(subject_list),1);
+    CHN=[]; ID=[]; freq=[]; Power_EO_CH1=[]; Power_EC_CH1=[];  Power_EO_CH1_LOG=[];  Power_EC_CH1_LOG=[];
     elseif strcmp(how_to_save,'array')
         Power_EO_CH1=zeros(129,length(subject_list)); Power_EC_CH1=zeros(129,length(subject_list)); Power_EO_CH1_LOG=zeros(129,length(subject_list)); Power_EC_CH1_LOG=zeros(129,length(subject_list));
     end
     for subject_list_count = 1:length(subject_list)
-        path  = [load_path subject_list{subject_list_count} '\'];
+        path  = [home_path subject_list{subject_list_count} '/'];
         EEG_EO = pop_loadset('filename',[subject_list{subject_list_count} '_EO.set'],'filepath', path );
         EEG_EC = pop_loadset('filename',[subject_list{subject_list_count} '_EC.set'],'filepath', path );
         %% Compute Power
@@ -61,36 +67,43 @@ for group_count = 1:length(group)
         for i=1:64
             [ power_EC(i,:), f] = pwelch(EEG_EC.data(i,:),WINDOW,NOVERLAP,NFFT,Fs,SPECTRUMTYPE);
         end
-        if strcmp(how_to_save,'table') || strcmp(file_type,'excel')
-            Power_EO_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EO(channel,:);
-            Power_EO_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EO(channel,:);
-            Power_EC_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=power_EC(channel,:);
-            Power_EO_CH1_LOG(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=10*log10(power_EO(channel,:))';%need to do a logtransformation
-            Power_EC_CH1_LOG(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=10*log10(power_EC(channel,:))';%need to do a logtransformation
-            ID(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
-            freq(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=f;%all frequencies
-        else
-            Power_EO_CH1(:,subject_list_count)=power_EO(channel,:)';
-            Power_EC_CH1(:,subject_list_count)=power_EC(channel,:)';
-            Power_EO_CH1_LOG(:,subject_list_count)=10*log10(power_EO(channel,:));%need to do a logtransformation
-            Power_EC_CH1_LOG(:,subject_list_count)=10*log10(power_EC(channel,:));%need to do a logtransformation
-        end
+
+        for ii=1:64
+ %          Power_EO_CH1(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO),ii)=power_EO(ii,:);
+            Power_EO_CH1=[Power_EO_CH1;power_EO(ii,:)'];
+            Power_EC_CH1=[Power_EC_CH1;power_EC(ii,:)'];
+            Power_EO_CH1_LOG=[Power_EO_CH1_LOG;10*log10(power_EO(ii,:))'];%need to do a logtransformation
+            Power_EC_CH1_LOG=[Power_EC_CH1_LOG;10*log10(power_EC(ii,:))'];%need to do a logtransformation
+            freq=[freq;f];%all frequencies
+            ID=[ID;str2double(repelem(subject_list(subject_list_count),length(f))')];
+            CHN=[CHN;repelem(string(EEG_EC.chanlocs(ii).labels),length(f))'];
+          %  Power_EO_CH1(ii*subject_list_count*length(power_EO)-(length(power_EO)-1):(ii*subject_list_count)*length(power_EO))=power_EO(ii,:);
+          %  Power_EC_CH1(ii*subject_list_count*length(power_EC)-(length(power_EC)-1):(ii*subject_list_count)*length(power_EC))=power_EC(ii,:);
+          %  Power_EO_CH1_LOG(ii*subject_list_count*length(power_EO)-(length(power_EO)-1):(ii*subject_list_count)*length(power_EO))=10*log10(power_EO(ii,:))';%need to do a logtransformation
+          %  Power_EC_CH1_LOG(ii*subject_list_count*length(power_EC)-(length(power_EC)-1):(ii*subject_list_count)*length(power_EC))=10*log10(power_EC(ii,:))';%need to do a logtransformation
+          %  ID(ii*subject_list_count*length(power_EO)-(length(power_EO)-1):(ii*subject_list_count)*length(power_EO))=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
+          %  freq(ii*subject_list_count*length(power_EO)-(length(power_EO)-1):(ii*subject_list_count)*length(power_EO))=f;%all frequencies
+        
+        end    
+       %     ID(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=str2double(repelem(subject_list(subject_list_count),length(f))'); %repeated variable with the ID number
+       %     freq(subject_list_count*length(power_EO)-(length(power_EO)-1):(subject_list_count)*length(power_EO))=f;%all frequencies
         
     end
-end
 %% saving everything to Excel or matlab
 
 if strcmp(file_type,'excel') || strcmp(how_to_save,'table')
-    Power_table = table(ID, freq,Power_EO_CH1, Power_EC_CH1, Power_EO_CH1_LOG, Power_EC_CH1_LOG);
+    Power_table = table(ID, freq, CHN, Power_EO_CH1, Power_EC_CH1, Power_EO_CH1_LOG, Power_EC_CH1_LOG);
 end
 if strcmp(file_type,'excel')
-    filename_table = [save_path 'Power_table_for_ch_' ch_name '_' group{group_count} '.xlsx'];
+    filename_table = [save_path 'Power_table_' group{group_count} '.xlsx'];
     writetable(Power_table, filename_table);
 elseif strcmp(file_type,'matlab')
-    filename_table = [save_path 'Power_table_for_ch_' ch_name '_' group{group_count}];
+    filename_table = [save_path 'Power_table_for_ch_' group{group_count}];
     if strcmp(how_to_save,'table')
         save(filename_table, Power_table);
     else
         save(filename_table, 'subject_list', 'f', 'Power_EO_CH1',  'Power_EC_CH1', 'Power_EO_CH1_LOG', 'Power_EC_CH1_LOG');
     end
+end
+
 end
