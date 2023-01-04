@@ -1,7 +1,9 @@
-Readme
-================
-Douwe Horsthuis
-2023-01-04
+---
+title: "Readme"
+author: "Douwe Horsthuis"
+date: "`r Sys.Date()`"
+output: github_document
+---
 
 [![Contributors](https://img.shields.io/github/contributors/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge)](https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/graphs/contributors)
 [![Forks](https://img.shields.io/github/forks/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge)](https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/network/members)
@@ -10,15 +12,13 @@ Douwe Horsthuis
 [![MIT
 License](https://img.shields.io/github/license/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency.svg?style=for-the-badge)](https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/blob/master/LICENSE.txt)
 
-<br />
-<p align="center">
-
+<br /> <p align="center">
 <a href="https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency/">
 <img src="images/logo.jpeg" alt="Logo" width="160" height="160"/> </a>
 
 <h3 align="center">
-Resting state - Pre-process/Microstates/PowerFrequency
-</h1>
+
+Resting state - Pre-process/Microstates/PowerFrequency</h1>
 
 ## About The Project
 
@@ -44,9 +44,9 @@ Molholm.
 6.  [Microstates](#microstates)  
 7.  [Extra functions](#extra-functions)
 8.  [2023 microstate paper](#2023-microstate-paper)
-9.  [License](#license)  
-10. [Contact](#contact)  
-11. [Acknowledgement](#acknowledgement)
+8.  [License](#license)  
+9.  [Contact](#contact)  
+10. [Acknowledgement](#acknowledgement)
 
 ### Built With
 
@@ -64,9 +64,7 @@ All of these scripts are created to run in matlab. They use EEGlab
 -   [XDFimport](http://sccn.ucsd.edu/eeglab/plugins/xdfimport1.14.zip)
     (eeglab plugin)
 -   [IClabel](https://github.com/sccn/ICLabel) (eeglab plugin)
--   [MST
-    Plugin](https://www.thomaskoenig.ch/index.php/software/microstates-in-eeglab/getting-started)
-    (microstate plugin)
+-   [MST Plugin](https://www.thomaskoenig.ch/index.php/software/microstates-in-eeglab/getting-started) (microstate plugin)
 
 ## Resting state project
 
@@ -74,8 +72,8 @@ All of these scripts are created to run in matlab. They use EEGlab
 
 This pipeline is build to analyse data collected using the Restingstate
 paradigm in our lab. This paradigm is essentially a 5 min trial with a
-fixation cross with the text “Please fixate on the cross” followed by a
-5 min trial that has the text “please close your eyes”. However, some of
+fixation cross with the text "Please fixate on the cross" followed by a
+5 min trial that has the text "please close your eyes". However, some of
 our data is collected by telling the participant instead to just look at
 the center of the screen, or to keep your eyes closed for 5 minutes. For
 this reason, the pipeline might add the triggers to keep the eyes open
@@ -136,13 +134,13 @@ For this we use the following 3 files: standard-10-5-cap385, BioSemi160,
 BioSemi64. The first 2 are from BESA and have the correct layout. The
 3rd is needed for the MoBI data. You can find these in the Functions and
 files folder (inside the src folder).  
-Lastly this script uses eeglab’s clean_artifacts function deletes the
+Lastly this script uses eeglab's clean_artifacts function deletes the
 bad channels and bad parts of data. Channels will get deleted by the
 standard noise criteria, if they are flat over 5 seconds and the
 function checks if channels are overly correlated with each other.After
 that it devides the data in 0.5 second epochs. In these it looks if
 there data has peaks that go over 35 standard deviantion of the channels
-amplitlude. If so these get deleted. Because it’s possible that between
+amplitlude. If so these get deleted. Because it's possible that between
 2 of these moments there is a very short amount of data, we make sure to
 delete all the continues data if between 2 boundries there is less then
 2 seconds of data. We got to the criteria of 35, because 20 is the
@@ -172,7 +170,7 @@ script since they are quick. If you want to save time, skip this one.
 
 This script loads a file with all the original channels, deletes the
 externals and uses these file locations to interpolate the channels of
-the corresponding subject’s data. In the case of 160 channel data, it
+the corresponding subject's data. In the case of 160 channel data, it
 uses the
 [transform_n\_channels](https://github.com/CognitiveNeuroLab/Interpolating_160ch_to_64ch_eeglab)
 function to interpolate the remaining channels not to the original 160,
@@ -188,8 +186,8 @@ This script will do an average reference.
 This is followed by an [Independent Component
 Analysis](https://eeglab.org/tutorials/06_RejectArtifacts/RunICA.html).
 We use the pca option to prevent rank-deficiencies, as best as we can.
-We set it to be all channels before interpolation - 1. We don’t want
-more because this gives “Ghost ICs” that are duplicates of existing
+We set it to be all channels before interpolation - 1. We don't want
+more because this gives "Ghost ICs" that are duplicates of existing
 ones. We also exclude an extra IC because of the avg ref, hence the -1.
 After his we delete eye, muscle and channel noise components by using
 [IClabel](https://github.com/sccn/ICLabel). IClabel will only delete the
@@ -198,7 +196,7 @@ noise and always less then 10% brain data. Normally we only delete eye
 components (\>0.8), and we arrived at this criteria after comparing (for
 a different dataset) how many components we (Ana, Douwe and Filip) would
 delete manually and what threshold would get the closest to that.
-However, since this is different data, and it’s un epoched so its harder
+However, since this is different data, and it's un epoched so its harder
 to clean, we decided to also delete extra components.
 
 #### G_preprocces4
@@ -222,15 +220,7 @@ different platforms, or as a table or individual variable in Matlab.
 
 ### Microstates
 
-The main Microstate analysis follows the instructions as written [On the
-website of the
-developer](https://www.thomaskoenig.ch/index.php/software/microstates-in-eeglab/getting-started)
-[Thomas Konig](https://www.thomaskoenig.ch/index.php/publication-list)
-of the microstate toolbox that we use. Using his microstate plugin, and
-[ragu
-software](https://www.thomaskoenig.ch/index.php/software/ragu/getting-started1)
-the final part was analyised. The plugin itself has a script
-`RunMicrostateAnalysis` which we used to do the analysis for everyone.
+The main Microstate analysis follows the instructions as written [On the website of the developer](https://www.thomaskoenig.ch/index.php/software/microstates-in-eeglab/getting-started) [Thomas Konig](https://www.thomaskoenig.ch/index.php/publication-list) of the microstate toolbox that we use. Using his microstate plugin, and [ragu software](https://www.thomaskoenig.ch/index.php/software/ragu/getting-started1) the final part was analyised. The plugin itself has a script `RunMicrostateAnalysis` which we used to do the analysis for everyone. 
 
 #### Extra functions
 
@@ -242,13 +232,8 @@ In this case it turns all the 160 channel data into 64 channels. But it
 will keep the original channels that are closed to the location of the
 corresponding 64ch cap.
 
-## 2023 microstate paper
-
-All the code used for this paper is located in the 2023 paper folder.
-While almost everything is the same as the pipeline there are some small
-differences, for example, we did not have to use the XDF files nor did
-we use 160 channel data (only 64 channels) so no transformation has been
-used.
+## 2023 microstate paper  
+All the code used for this paper is located in the 2023 paper folder. While almost everything is the same as the pipeline there are some small differences, for example, we did not have to use the XDF files nor did we use 160 channel data (only 64 channels) so no transformation has been used. 
 
 ## License
 
@@ -256,9 +241,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Ana Francisco - <ana.alvesfrancisco@einsteinmed.org> Douwe Horsthuis -
-<douwehorsthuis@gmail.com> Filip De Sanctis -
-<pierfilippo.sanctis@einsteinmed.org>
+Ana Francisco -
+[ana.alvesfrancisco\@einsteinmed.org](mailto:ana.alvesfrancisco@einsteinmed.org)
+Douwe Horsthuis -
+[douwehorsthuis\@gmail.com](mailto:douwehorsthuis@gmail.com) Filip De
+Sanctis -
+[pierfilippo.sanctis\@einsteinmed.org](mailto:pierfilippo.sanctis@einsteinmed.org)
 
 Project Link:
 [resting-state-analysis-pipeline-microstates-frequency](https://github.com/CognitiveNeuroLab/resting-state-analysis-pipeline-microstates-frequency)
